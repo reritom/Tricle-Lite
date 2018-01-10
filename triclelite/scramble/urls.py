@@ -5,5 +5,5 @@ app_name = 'scrambler'
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    url(r'go/', views.post, name='post'),
+    url(r'post/', views.post, name='post'),
 ]

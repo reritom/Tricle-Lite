@@ -8,4 +8,4 @@ def home(request):
     return render(request, 'scramble/home.html')
 
 def post(request):
-    pass
+    return JsonResponse({"Hello":"There"})
