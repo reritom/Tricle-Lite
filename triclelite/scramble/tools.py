@@ -35,4 +35,5 @@ def get_uuid_status(uuid):
         This function returns whether the uuid is still active or not
         :returns: Bool
     '''
+    # Check timeout, if expired, delete transaction, move it to expired
     pass

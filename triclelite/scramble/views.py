@@ -5,6 +5,7 @@ from scramble.scramblecore import scrambler
 # Create your views here.
 
 def home(request):
+    #transaction_daemon()
     return render(request, 'scramble/home.html')
 
 def post(request):

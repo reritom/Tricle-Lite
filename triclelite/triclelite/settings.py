@@ -39,6 +39,11 @@ else:
     DEBUG = True
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+# Internal settings
+
+TRANSACTION_TIMEOUT = 10 # Time for a transaction to become inactive
+
+
 # Application definition
 
 INSTALLED_APPS = [
