@@ -9,7 +9,7 @@ def validate_uuid_request(uuid):
         If it doesn't exist in db, continue validation but return error
         If it doesn't exist in /media, return error
     '''
-    return validate_uuid_in_db(uuid) or validate_uuid_in_media(uuid)
+    return validate_uuid_in_db(uuid) and validate_uuid_in_media(uuid)
 
 def generate_uuid():
     '''
@@ -29,8 +29,6 @@ def validate_uuid_in_db(uuid):
         This function returns true if the uuid is in the db
         :returns: Bool
     '''
-    print('validate_uuid_in_db: ' + uuid)
-    print('Active: ' + str(ActiveURL.objects.filter(uuid=uuid).exists()))
     return ActiveURL.objects.filter(uuid=uuid).exists()
 
 

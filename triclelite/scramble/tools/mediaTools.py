@@ -5,19 +5,26 @@ import os, shutil
 from scramble.models import ActiveURL, ExpiredURL
 from django.conf import settings
 
-def delete_dir(uuid):
+def delete_dir(url):
     '''
-        This method checks if the uuid dir is present
+        This method checks if the url dir is present
         and deletes it if it is.
     '''
     if 'scramble' in os.listdir(settings.MEDIA_ROOT):
         if 'temp' in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble')):
-            if uuid in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')):
-                url_dir = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', uuid)
+            if url in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')):
+                url_dir = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
                 shutil.rmtree(url_dir)
 
-def make_dir(uuid):
+def make_dir(url):
     '''
-        This method makes a directory for a uuid
+        This method makes a directory for a url
     '''
-    pass
+    if not 'scramble' in os.listdir(settings.MEDIA_ROOT):
+        os.mkdir(os.path.join(settings.MEDIA_ROOT, 'scramble'))
+
+    if not 'temp' in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble')):
+        os.mkdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp'))
+
+    if not url in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')):
+        os.mkdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url))
