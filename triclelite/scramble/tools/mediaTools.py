@@ -28,9 +28,3 @@ def make_dir(url):
 
     if not url in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')):
         os.mkdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url))
-        
-def validate_uuid_in_media(url):
-    '''
-        This method checks that the url is present in media dir.
-    '''
-    return url in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp'))
