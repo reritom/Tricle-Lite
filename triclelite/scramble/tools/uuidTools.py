@@ -49,12 +49,13 @@ def get_uuid_status(uuid):
     # Check timeout, if expired, delete transaction, move it to expired
     return ActiveURL.objects.filter(uuid=uuid).getStatus()
 
-def expire_uuid_in_db(uuid):
+def expire_uuid(uuid):
     '''
         This method deletes the active transaction object
         and creates an expired object
     '''
     uuid_obj = ActiveURL.objects.get(uuid=uuid)
+    mediaTools.delete_dir(uuid)
     expired_uuid, created = ExpiredURL.objects.get_or_create(uuid=uuid_obj.uuid)
     if created:
         expired_uuid.created = uuid_obj.created

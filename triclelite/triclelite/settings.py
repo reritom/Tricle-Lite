@@ -41,8 +41,8 @@ else:
 
 # Internal settings
 
-TRANSACTION_TIMEOUT = 10 # Time for a transaction to become inactive
-
+EXPIRATION_TIME_LIMIT = 10 # Time for a transaction to become inactive
+DOWNLOAD_LIMIT = 5
 
 # Application definition
 
