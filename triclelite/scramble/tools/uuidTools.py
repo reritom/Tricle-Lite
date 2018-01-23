@@ -18,7 +18,7 @@ def generate_uuid():
     '''
     new_uuid = str(uuid.uuid4()).replace('-','')
 
-    if ActiveURL.objects.filter(uuid=new_uuid).exists():
+    if ActiveURL.objects.filter(uuid=new_uuid).exists() or ExpiredURL.objects.filter(uuid=new_uuid).exists():
         return generate_uuid()
     else:
         return new_uuid
