@@ -97,7 +97,7 @@ def done(request, uuid):
         # Check that the uuid is present in either location
         if uuidTools.validate_uuid_in_db(uuid):
             uuidTools.expire_uuid(uuid)
-        if mediaTools.validate_uuid_in_media(uuid):
+        if uuidTools.validate_uuid_in_media(uuid):
             mediaTools.delete_dir(uuid)
 
         return JsonResponse({"Done":uuid})
