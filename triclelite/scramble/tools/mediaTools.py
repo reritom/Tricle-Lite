@@ -28,3 +28,9 @@ def make_dir(url):
 
     if not url in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')):
         os.mkdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url))
+
+def delete_file(name):
+    '''
+        This method deletes a file.
+    '''
+    os.remove(name)

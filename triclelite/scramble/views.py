@@ -41,7 +41,7 @@ def post(request):
     if formdat['mode'] not in ['Scramble', 'Unscramble']:
         return JsonResponse({'post':'Invalid mode'})
 
-    for key in ['key_one', 'key_two', 'key_three']:
+    for key in ['k1', 'k2', 'k3']:
         if len(formdat[key]) < 3:
             return JsonResponse({'post':'Key too short'})
 
@@ -89,8 +89,7 @@ def load(request, uuid):
         This gets AJAX-ed straight after the post
     '''
     url = uuid
-    #validate_uuid_request()
-    if not ActiveURL.objects.filter(uuid=url).exists():
+    if not uuidTools.validate_uuid_request(url):
         return JsonResponse({"load":False})
 
     urlobj = ActiveURL.objects.get(uuid=url)
@@ -161,13 +160,20 @@ def load(request, uuid):
     with open(os.path.join(media_path, "marked.txt"),"w+") as f:
         f.write("")
     #mark files as processed
+    '''
+    # Remove the unprocessed files and the data file
+    for filename in os.listdir(media_path):
+        if not (filename.endswith('.txt') or filename.endswith('.zip')):
+            mediaTools.delete_file(os.path.join(media_path, filename))
+    '''
     return JsonResponse({"load":uuid})
 
 def download(request, uuid):
     '''
         This method retrieves the zipped download file
     '''
-    #validate_uuid_request()
+    if not uuidTools.validate_uuid_request(uuid):
+        return JsonResponse({"Download":False})
     url = uuid
     urlobj = ActiveURL.objects.get(uuid=url)
 
@@ -215,7 +221,7 @@ def done(request, uuid):
     '''
         This method removes any transaction data for a given uuid
     '''
-    if uuidTools.validate_uuid_in_db(uuid) or mediaTools.validate_uuid_in_media(uuid):
+    if uuidTools.validate_uuid_in_db(uuid) or uuidTools.validate_uuid_in_media(uuid):
         # Check that the uuid is present in either location
         if uuidTools.validate_uuid_in_db(uuid):
             uuidTools.expire_uuid(uuid)
