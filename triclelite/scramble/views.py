@@ -93,8 +93,13 @@ def done(request, uuid):
     '''
         This method removes any transaction data for a given uuid
     '''
-    if uuidTools.validate_uuid_request(uuid):
-        uuidTools.expire_uuid(uuid)
+    if uuidTools.validate_uuid_in_db(uuid) or mediaTools.validate_uuid_in_media(uuid):
+        # Check that the uuid is present in either location
+        if uuidTools.validate_uuid_in_db(uuid):
+            uuidTools.expire_uuid(uuid)
+        if mediaTools.validate_uuid_in_media(uuid):
+            mediaTools.delete_dir(uuid)
+
         return JsonResponse({"Done":uuid})
     else:
         return JsonResponse({"DoesNotExistDone":uuid})
