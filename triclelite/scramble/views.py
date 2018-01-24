@@ -81,7 +81,7 @@ def post(request):
             urlobj.save()
 
     # return success to initate the load
-    return JsonResponse({"Post":urlobj.uuid})
+    return JsonResponse({"Post":True, "url":this_uuid})
 
 def load(request, uuid):
     '''
@@ -166,7 +166,7 @@ def load(request, uuid):
         if not (filename.endswith('.txt') or filename.endswith('.zip')):
             mediaTools.delete_file(os.path.join(media_path, filename))
     '''
-    return JsonResponse({"load":uuid})
+    return JsonResponse({"load":True, "url":uuid})
 
 def download(request, uuid):
     '''
