@@ -31,6 +31,10 @@ def post(request):
     '''
     #validate_keys()
     #valifate_files()
+    print(request.POST)
+    for f in request.FILES:
+        print(f)
+    print(request.FILES)
     form = ScrambleForm(request.POST, request.FILES)
     if not form.is_valid():
         return JsonResponse({"post":False, "detail":"Invalid form data"})

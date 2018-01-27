@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html>
   <head>
     <meta charset="utf-8">
@@ -7,20 +8,15 @@
 
       </head>
   <body>
+    <div class="container">
+
+
     <h1>Welcome</h1>
-    <ul>
-      <li>Key1</li>
-      <li>Key2</li>
-      <li>Key3</li>
-    </ul>
-    <p>Selected files</p>
-    <p>Scramble/Unscramble</p>
-    <p>Download</p>
-    <p>Done</p>
 
-    <form enctype="multipart/form-data" method="POST">
+
+    <form id='form' enctype="multipart/form-data" method="POST">
         {% csrf_token %}
-
+        <div id="token" style="display:none">{{ csrf_token}}</div>
         <div class="form-group"><input type="text" name="key_one" maxlength="256" class="form-control" title="" required placeholder="Enter your first key" id="id_key_one" /></div>
         <div class="form-group"><input type="text" name="key_two" maxlength="256" class="form-control" title="" required placeholder="Enter your second key" id="id_key_two" /></div>
         <div class="form-group"><input type="text" name="key_three" maxlength="256" class="form-control" title="" required placeholder="Enter your third key" id="id_key_three" /></div>
@@ -35,7 +31,7 @@
         <div class="input-group">
                 <label class="input-group-btn">
                     <span class="btn btn-primary">
-                        Browse&hellip; <input type="file" accept="image/*" style="display: none;" name="images" class="" title="" required multiple id="id_images">
+                        Browse&hellip; <input id="red" type="file" accept="image/*" style="display: none;" name="images" class="" title="" required multiple id="id_images">
                     </span>
                 </label>
                 <input type="text" class="form-control" readonly>
@@ -43,14 +39,22 @@
 
           </div>
 
-        <input class="btn btn-success btn-block btn-lg" type="submit" name="" value="Start">
+        <input id="submit" class="btn btn-success btn-block btn-lg" type="submit" name="" value="Start">
       </form>
+      <button class="btn btn-info btn-block btn-lg" name="button">Download</button>
+      <button class="btn btn-info btn-block btn-lg" name="button">Done</button>
+
+  </div>
   </body>
 
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 
   <script src="static/scripts/main.js"></script>
+  <script src="{% static "scripts/jack.js" %}"></script>
+
 </html>
