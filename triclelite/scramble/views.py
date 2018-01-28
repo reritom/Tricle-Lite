@@ -172,6 +172,13 @@ def load(request, uuid):
     '''
     return JsonResponse({"load":True, "url":uuid})
 
+def status(request, uuid):
+    '''
+        This method returns the status of the uuid,
+        including whether it is still downloadable
+    '''
+    pass
+
 def download(request, uuid):
     '''
         This method retrieves the zipped download file
