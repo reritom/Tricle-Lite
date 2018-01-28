@@ -112,6 +112,7 @@ function urlIsValid() {
         errorHandler("url is invalid");
         return false;
     } else {
+        successHandler();
         return true;
     }
 }
@@ -120,5 +121,14 @@ function errorHandler(message) {
     /*
       Format a message and display it.
     */
-    $("#errorDiv").html(message);
+      $("#errorDiv").show();
+    $("#errorMessage").html(message);
+}
+
+function successHandler() {
+    /*
+      Format a message and display it.
+    */
+    $("#errorDiv").hide();
+    $("#errorMessage").html("");
 }
