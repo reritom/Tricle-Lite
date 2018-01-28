@@ -103,6 +103,16 @@ function amDone() {
     }); // End of AJAX
 }
 
+function isDownloadable(){
+  /*
+    Return true if the urlId is still valid for downloads
+  */
+  if (!urlIsValid()) {
+      return false
+  };
+  // Here AJAX to get status of downloads
+}
+
 function urlIsValid() {
     /*
       Return true if the urlId global variable is set
@@ -121,7 +131,7 @@ function errorHandler(message) {
     /*
       Format a message and display it.
     */
-      $("#errorDiv").show();
+    $("#errorDiv").show();
     $("#errorMessage").html(message);
 }
 
