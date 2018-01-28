@@ -102,8 +102,6 @@ def load(request, uuid):
         #check if it is expired, delete dir, redirect to home
         uuidTools.expire_uuid(url)
 
-
-
     expiration = urlobj.created + timedelta(minutes=settings.EXPIRATION_TIME_LIMIT)
 
     if timezone.now() > expiration:
@@ -177,7 +175,53 @@ def status(request, uuid):
         This method returns the status of the uuid,
         including whether it is still downloadable
     '''
-    pass
+
+    status = {'processed':'?',
+              'downloadable':'?',
+              'expires_at':'?',
+              'downloads_remaining':'?',
+              'valid':'?'}
+
+    url = uuid
+    if not uuidTools.validate_uuid_request(url):
+        status['valid'] = False
+        return JsonResponse(status)
+
+    urlobj = ActiveURL.objects.get(uuid=url)
+
+    if urlobj.expired == True:
+        #check if it is expired, delete dir, redirect to home
+        uuidTools.expire_uuid(url)
+        status['valid'] = False
+        return JsonResponse(status)
+
+    expiration = urlobj.created + timedelta(minutes=settings.EXPIRATION_TIME_LIMIT)
+
+    if timezone.now() > expiration:
+        #url has expired, mark as expired, delete dirs, redirect to homepage
+        uuidTools.expire_uuid(url)
+        status['valid'] = False
+        return JsonResponse(status)
+    else:
+        status['valid'] = True
+        status['expires_at'] = expiration
+
+    if "marked.txt" in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)):
+        status['processed'] = True
+    else:
+        status['processed'] = False
+
+    status['downloads_remaining'] = settings.DOWNLOAD_LIMIT - urlobj.down_count
+
+    if urlobj.down_count < settings.DOWNLOAD_LIMIT:
+        status['downloadable'] = True
+    else:
+        status['downloadable'] = False
+
+    if urlobj.down_count == settings.DOWNLOAD_LIMIT:
+        uuidTools.expire_uuid(url)
+
+    return JsonResponse(status)
 
 def download(request, uuid):
     '''

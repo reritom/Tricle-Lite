@@ -58,7 +58,7 @@ function startLoad(urlId) {
             // Start auto-download
             if (result.load === true) {
                 urlId = result.url;
-                startDown(urlId);
+                isDownloadable();
             }
         },
         error: function() {
@@ -110,7 +110,28 @@ function isDownloadable(){
   if (!urlIsValid()) {
       return false
   };
-  // Here AJAX to get status of downloads
+
+  $.ajax({
+      type: "GET",
+      url: "/" + "status" + "/" + urlId,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(result) {
+          console.log(result);
+          if (result.valid && result.downloadable){
+            console.log("am here");
+            startDown();
+          }
+          else {
+            errorHandler("Download limit reached");
+          };
+      },
+      error: function() {
+          console.log("aww shit, something went wrong")
+      }
+  }); // End of AJAX
+
 }
 
 function urlIsValid() {
