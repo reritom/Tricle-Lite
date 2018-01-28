@@ -1,6 +1,6 @@
 $( document ).ready(function() {
 
-urlId = "Empty"
+urlId = false
 //on post, run the ajax
 $("#submit").click(function(e){
         e.preventDefault();
@@ -8,15 +8,6 @@ $("#submit").click(function(e){
         for (var pair of formData.entries()) {
     console.log(pair[0]+ ', ' + pair[1]);
 }
-        /*
-        formData.append("csrfmiddlewaretoken", $('token').val());
-
-        formData.append("key_one", $('[name="key_one"]').val());
-        formData.append("key_two", $('[name="key_two"]').val());
-        formData.append("key_three", $('[name="key_three"]').val());
-        formData.append("mode", $('[name="mode"]').val());
-        */
-
         $.ajax({type: "POST",
                 url: "/",
                 data: formData,
@@ -25,51 +16,80 @@ $("#submit").click(function(e){
                 dataType: 'json',
                 success:function(result)
                 {
-                    console.log(result)
+                    console.log(result);
+                    if (result.post === true) {
+                      urlId = result.url;
+                      startLoad(urlId);
+                    }
                 }
                 }
-              );
-      });
-    });
-//store the url if success, or show Error
-//if success, call ajax to load
-//if load success, click the download button
-//if error, show  error
+              ); // End of AJAX
+      }); //End of submit click
 
-/*
-    $.ajax({
-      url: urlId,
-      dataType: 'json',
-      success: function (data) {
-        if (data.proc) {
-          $('#note').text("Your download is ready");;
-          $('#done_link').css("display", "block");
+    }); //End of ready
 
-          $('#downen_link')[0].click();
 
-          }
-      else {
-          }
-        }
-    });
-  });
-  */
+  function startLoad(urlId) {
+    // Code to be executed
+    if (urlIsValid()) {
+    $.ajax({type: "GET",
+            url: "/" + "load" + "/" + urlId,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(result)
+            {
+                console.log(result);
+                //Unhide download button
+                // Start auto-download
+                if (result.load === true) {
+                  urlId = result.url;
+                  startDown(urlId);
+                }
+            }
+            }
+          ); // End of AJAX
+        }; //End of URL is Valid
+}
 
-  //AJAX Post
-  //    Show loading animation
-  //    If success:
-  //        Call load automatically
-
-  //AJAX Load
-  //    If success:
-  //        Unhide download button
-  //        Call download automatically
-
-  //AJAX Download
-  //    If success:
-  //        Unhide done button
+  function startDown() {
+    // Code to be executed
+    if (urlIsValid()){
+    console.log("Downloading file");
+    window.location="/" + "down" + "/" + urlId;
+  }; // End of URL is Valid
+    //AJAX call a tester, if the download is still valid, download
+}
 
   //AJAX Done
   //    If success:
   //        Finished animation
   //        Reset page
+  function amDone() {
+    // Code to be executed
+    console.log("Ending process");
+    if (urlIsValid()){
+    $.ajax({type: "GET",
+            url: "/" + "done" + "/" + urlId,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(result)
+            {
+                console.log(result);
+                urlId = false;
+            }
+            }
+          ); // End of AJAX
+        };// End of URL is valid
+}
+
+function urlIsValid() {
+  if (urlId === false){
+    console.log("url is invalid")
+    return false;
+  }
+  else {
+    return true;
+  }
+}

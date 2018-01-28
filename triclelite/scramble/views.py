@@ -85,7 +85,7 @@ def post(request):
             urlobj.save()
 
     # return success to initate the load
-    return JsonResponse({"Post":True, "url":this_uuid})
+    return JsonResponse({"post":True, "url":this_uuid})
 
 def load(request, uuid):
     '''
