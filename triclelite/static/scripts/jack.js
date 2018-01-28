@@ -76,7 +76,6 @@ function startDown() {
     };
     console.log("Downloading file");
     window.location = "/" + "down" + "/" + urlId;
-    //AJAX call a tester, if the download is still valid, download
 }
 
 function amDone() {

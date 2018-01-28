@@ -283,6 +283,12 @@ def done(request, uuid):
         if uuidTools.validate_uuid_in_media(uuid):
             mediaTools.delete_dir(uuid)
 
-        return JsonResponse({"Done":uuid})
+        return JsonResponse({"done":uuid})
     else:
-        return JsonResponse({"DoesNotExistDone":uuid})
+        return JsonResponse({"done":False})
+
+def cleanup(request):
+    '''
+        This method checks all active urls and expires accordingly.
+    '''
+    pass

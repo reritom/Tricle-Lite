@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'down/(?P<uuid>\w+)/', views.download, name='download'),
     url(r'status/(?P<uuid>\w+)/', views.status, name='status'),
     url(r'done/(?P<uuid>\w+)/', views.done, name='done'),
+    url(r'iaw/', views.cleanup, name='cleanup'),
 ]
