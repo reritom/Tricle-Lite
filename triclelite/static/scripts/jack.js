@@ -48,7 +48,7 @@ function startLoad(urlId) {
     };
     $.ajax({
         type: "GET",
-        url: "/" + "load" + "/" + urlId,
+        url: "/" + "load" + "/" + urlId + "/",
         processData: false,
         contentType: false,
         dataType: 'json',
@@ -75,7 +75,7 @@ function startDown() {
         return
     };
     console.log("Downloading file");
-    window.location = "/" + "down" + "/" + urlId;
+    window.location = "/" + "down" + "/" + urlId + "/";
 }
 
 function amDone() {
@@ -88,7 +88,7 @@ function amDone() {
     console.log("Ending process");
     $.ajax({
         type: "GET",
-        url: "/" + "done" + "/" + urlId,
+        url: "/" + "done" + "/" + urlId + "/",
         processData: false,
         contentType: false,
         dataType: 'json',
@@ -112,7 +112,7 @@ function isDownloadable(){
 
   $.ajax({
       type: "GET",
-      url: "/" + "status" + "/" + urlId,
+      url: "/" + "status" + "/" + urlId + "/",
       processData: false,
       contentType: false,
       dataType: 'json',
