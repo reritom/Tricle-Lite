@@ -3,63 +3,50 @@ from django.conf import settings
 from scramble.models import ActiveURL, ExpiredURL
 from scramble.tools import mediaTools
 
-def validate_uuid_request(uuid):
+def validate_url_request(url):
     '''
-        This receives a uuid and validates that it exists in /media and the db
+        This receives a url and validates that it exists in /media and the db
         If it doesn't exist in db, continue validation but return error
         If it doesn't exist in /media, return error
     '''
-    return validate_uuid_in_db(uuid) and validate_uuid_in_media(uuid)
+    return validate_url_in_db(url) and validate_url_in_media(url)
 
-def generate_uuid():
+def validate_url_in_db(url):
     '''
-        This function generates a uuid and validates that it doesnt already exist
-        :returns: String
-    '''
-    new_uuid = str(uuid.uuid4()).replace('-','')
-
-    if ActiveURL.objects.filter(uuid=new_uuid).exists() or ExpiredURL.objects.filter(uuid=new_uuid).exists():
-        return generate_uuid()
-    else:
-        return new_uuid
-
-
-def validate_uuid_in_db(uuid):
-    '''
-        This function returns true if the uuid is in the db
+        This function returns true if the url is in the db
         :returns: Bool
     '''
-    return ActiveURL.objects.filter(uuid=uuid).exists()
+    return ActiveURL.objects.filter(url=url).exists()
 
 
-def validate_uuid_in_media(uuid):
+def validate_url_in_media(url):
     '''
-        This function returns true if the uuid is in media
+        This function returns true if the url is in media
         :returns: Bool
     '''
     # This assumes that the 'temp' directory exists
-    return uuid in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp'))
+    return url in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp'))
 
 
-def get_uuid_status(uuid):
+def get_url_status(url):
     '''
-        This function returns whether the uuid is still active or not
+        This function returns whether the url is still active or not
         :returns: Bool
     '''
     # Check timeout, if expired, delete transaction, move it to expired
-    return ActiveURL.objects.filter(uuid=uuid).getStatus()
+    return ActiveURL.objects.filter(url=url).getStatus()
 
-def expire_uuid(uuid):
+def expire_url(url):
     '''
         This method deletes the active transaction object
         and creates an expired object
     '''
-    uuid_obj = ActiveURL.objects.get(uuid=uuid)
-    mediaTools.delete_dir(uuid)
-    expired_uuid, created = ExpiredURL.objects.get_or_create(uuid=uuid_obj.uuid)
+    url_obj = ActiveURL.objects.get(url=url)
+    mediaTools.delete_dir(url)
+    expired_url, created = ExpiredURL.objects.get_or_create(url=url_obj.get_url())
     if created:
-        expired_uuid.created = uuid_obj.created
-        expired_uuid.number_of_files = uuid_obj.number_of_files
-        expired_uuid.mode = uuid_obj.mode
-        expired_uuid.save()
-    uuid_obj.delete()
+        expired_url.created = url_obj.created
+        expired_url.number_of_files = url_obj.number_of_files
+        expired_url.mode = url_obj.mode
+        expired_url.save()
+    url_obj.delete()

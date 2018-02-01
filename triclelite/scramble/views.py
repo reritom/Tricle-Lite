@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from scramble.scramblecore import scrambler
-from scramble.tools import mediaTools, uuidTools
+from scramble.tools import mediaTools, urlTools
 from scramble.models import ActiveURL, ExpiredURL
 from scramble.forms import ScrambleForm
 from django.conf import settings
@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from hashlib import sha1
 from pathlib import Path
 
-import uuid, shutil, zipfile, os, pickle
+import shutil, zipfile, os, pickle
 from PIL import Image
 
 # Create your views here.
@@ -52,25 +52,15 @@ def post(request):
     if not len(request.FILES.getlist('images')) > 0:
         return JsonResponse({"post":False, "detail":"No images submitted"})
 
-    valid = True
-    if valid:
-        # Create an ActiveURL
-        urlobj = ActiveURL.objects.create()
-        this_uuid = uuidTools.generate_uuid()
-        urlobj.uuid = this_uuid
-        if formdat['mode'] == 'Unscramble':
-            urlobj.mode = 'Unscramble'
-        urlobj.save()
-        mediaTools.make_dir(urlobj.uuid)
+    # Create an ActiveURL
+    urlobj = ActiveURL.objects.create()
+    this_url = urlobj.get_url()
+    if formdat['mode'] == 'Unscramble':
+        urlobj.mode = 'Unscramble'
+    urlobj.save()
 
     # Create the dir for storing the files
-    if 'temp' not in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble')):
-        os.mkdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp'))
-
-    if this_uuid not in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')):
-            os.mkdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', this_uuid))
-
-    media_path = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', this_uuid)
+    media_path = mediaTools.make_dir(this_url)
 
     # Store the keys
     with open(os.path.join(media_path, 'data'), 'wb') as fp:
@@ -81,32 +71,31 @@ def post(request):
         if f.name.lower().endswith(('.jpg', '.bmp', '.png', '.jpeg')):
             image = Image.open(f)
             image.save(os.path.join(media_path, f.name), subsampling=0, quality=100)
-            urlobj.number_of_files = urlobj.number_of_files + 1
-            urlobj.save()
+            urlobj.increment_count()
 
     # return success to initate the load
-    return JsonResponse({"post":True, "url":this_uuid})
+    return JsonResponse({"post":True, "url":this_url})
 
-def load(request, uuid):
+def load(request, url):
     '''
         This method processes the files.
         This gets AJAX-ed straight after the post
     '''
-    url = uuid
-    if not uuidTools.validate_uuid_request(url):
+
+    if not urlTools.validate_url_request(url):
         return JsonResponse({"load":False})
 
-    urlobj = ActiveURL.objects.get(uuid=url)
+    urlobj = ActiveURL.objects.get(url=url)
 
     if urlobj.expired == True:
         #check if it is expired, delete dir, redirect to home
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
 
     expiration = urlobj.created + timedelta(minutes=settings.EXPIRATION_TIME_LIMIT)
 
     if timezone.now() > expiration:
         #url has expired, mark as expired, delete dirs, redirect to homepage
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
 
     if "marked.txt" in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)):
         return JsonResponse({"load":"marked"})
@@ -151,7 +140,7 @@ def load(request, uuid):
                         except Exception as e:
                             print("Error saving as BMP for user " + request.user + " in interaction " + urlobj.url + " : " + e)
                             print("Unable to save, expiring " + urlobj.url)
-                            uuidTools.expire_uuid(url)
+                            urlTools.expire_url(url)
 
             zf = zipfile.ZipFile(zipadr, mode='a')
             try:
@@ -168,11 +157,11 @@ def load(request, uuid):
         if not (filename.endswith('.txt') or filename.endswith('.zip')):
             mediaTools.delete_file(os.path.join(media_path, filename))
     '''
-    return JsonResponse({"load":True, "url":uuid})
+    return JsonResponse({"load":True, "url":url})
 
-def status(request, uuid):
+def status(request, url):
     '''
-        This method returns the status of the uuid,
+        This method returns the status of the url,
         including whether it is still downloadable
     '''
 
@@ -182,16 +171,15 @@ def status(request, uuid):
               'downloads_remaining':'?',
               'valid':'?'}
 
-    url = uuid
-    if not uuidTools.validate_uuid_request(url):
+    if not urlTools.validate_url_request(url):
         status['valid'] = False
         return JsonResponse(status)
 
-    urlobj = ActiveURL.objects.get(uuid=url)
+    urlobj = ActiveURL.objects.get(url=url)
 
     if urlobj.expired == True:
         #check if it is expired, delete dir, redirect to home
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
         status['valid'] = False
         return JsonResponse(status)
 
@@ -199,7 +187,7 @@ def status(request, uuid):
 
     if timezone.now() > expiration:
         #url has expired, mark as expired, delete dirs, redirect to homepage
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
         status['valid'] = False
         return JsonResponse(status)
     else:
@@ -219,22 +207,22 @@ def status(request, uuid):
         status['downloadable'] = False
 
     if urlobj.down_count == settings.DOWNLOAD_LIMIT:
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
 
     return JsonResponse(status)
 
-def download(request, uuid):
+def download(request, url):
     '''
         This method retrieves the zipped download file
     '''
-    if not uuidTools.validate_uuid_request(uuid):
+    if not urlTools.validate_url_request(url):
         return JsonResponse({"Download":False})
-    url = uuid
-    urlobj = ActiveURL.objects.get(uuid=url)
+
+    urlobj = ActiveURL.objects.get(url=url)
 
     if urlobj.down_count >= settings.DOWNLOAD_LIMIT:
         #to limit number of download attempts, for security
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
         return JsonResponse({"Download":'limit reached'})
     else:
         urlobj.down_count += 1
@@ -242,18 +230,18 @@ def download(request, uuid):
 
     if urlobj.expired == True:
         #check if it is expired, delete dir, redirect to home
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
         return JsonResponse({"Download":'url expired'})
 
     expiration = urlobj.created + timedelta(minutes=settings.EXPIRATION_TIME_LIMIT)
 
     if timezone.now() > expiration:
         #url has expired, mark as expired, delete dirs, redirect to homepage
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
         return JsonResponse({"Download":'url expired'})
 
     if url not in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')):
-        uuidTools.expire_uuid(url)
+        urlTools.expire_url(url)
         return JsonResponse({"Download":'url not found'})
 
     if "marked.txt" not in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)):
@@ -270,20 +258,20 @@ def download(request, uuid):
     response['Content-Disposition'] = 'attachment; filename=' + prezipped
     return response
 
-    return JsonResponse({"Download":uuid})
+    return JsonResponse({"Download":url})
 
-def done(request, uuid):
+def done(request, url):
     '''
-        This method removes any transaction data for a given uuid
+        This method removes any transaction data for a given url
     '''
-    if uuidTools.validate_uuid_in_db(uuid) or uuidTools.validate_uuid_in_media(uuid):
-        # Check that the uuid is present in either location
-        if uuidTools.validate_uuid_in_db(uuid):
-            uuidTools.expire_uuid(uuid)
-        if uuidTools.validate_uuid_in_media(uuid):
-            mediaTools.delete_dir(uuid)
+    if urlTools.validate_url_in_db(url) or urlTools.validate_url_in_media(url):
+        # Check that the url is present in either location
+        if urlTools.validate_url_in_db(url):
+            urlTools.expire_url(url)
+        if urlTools.validate_url_in_media(url):
+            mediaTools.delete_dir(url)
 
-        return JsonResponse({"done":uuid})
+        return JsonResponse({"done":url})
     else:
         return JsonResponse({"done":False})
 
