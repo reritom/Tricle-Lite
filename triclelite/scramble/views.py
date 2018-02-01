@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from scramble.scramblecore import scrambler
-from scramble.tools import mediaTools, urlTools
+from scramble.tools import mediaTools, urlTools, commonTools
 from scramble.models import ActiveURL, ExpiredURL
 from scramble.forms import ScrambleForm
 from django.conf import settings
@@ -31,10 +31,8 @@ def post(request):
     '''
     #validate_keys()
     #valifate_files()
-    print(request.POST)
-    for f in request.FILES:
-        print(f)
-    print(request.FILES)
+    commonTools.show_request(request)
+
     form = ScrambleForm(request.POST, request.FILES)
     if not form.is_valid():
         return JsonResponse({"post":False, "detail":"Invalid form data"})
@@ -87,18 +85,12 @@ def load(request, url):
 
     urlobj = ActiveURL.objects.get(url=url)
 
-    if urlobj.expired == True:
-        #check if it is expired, delete dir, redirect to home
-        urlTools.expire_url(url)
-
-    expiration = urlobj.created + timedelta(minutes=settings.EXPIRATION_TIME_LIMIT)
-
-    if timezone.now() > expiration:
+    if urlobj.is_expired():
         #url has expired, mark as expired, delete dirs, redirect to homepage
         urlTools.expire_url(url)
 
-    if "marked.txt" in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)):
-        return JsonResponse({"load":"marked"})
+    if urlobj.is_processed():
+        return JsonResponse({"load":"processed"})
 
     media_path = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
 
@@ -148,9 +140,8 @@ def load(request, url):
             finally:
                 zf.close()
 
-    with open(os.path.join(media_path, "marked.txt"),"w+") as f:
-        f.write("")
     #mark files as processed
+    urlobj.set_processed()
     '''
     # Remove the unprocessed files and the data file
     for filename in os.listdir(media_path):
@@ -177,31 +168,23 @@ def status(request, url):
 
     urlobj = ActiveURL.objects.get(url=url)
 
-    if urlobj.expired == True:
-        #check if it is expired, delete dir, redirect to home
-        urlTools.expire_url(url)
-        status['valid'] = False
-        return JsonResponse(status)
-
-    expiration = urlobj.created + timedelta(minutes=settings.EXPIRATION_TIME_LIMIT)
-
-    if timezone.now() > expiration:
+    if urlobj.is_expired():
         #url has expired, mark as expired, delete dirs, redirect to homepage
         urlTools.expire_url(url)
         status['valid'] = False
         return JsonResponse(status)
     else:
         status['valid'] = True
-        status['expires_at'] = expiration
+        status['expires_at'] = urlobj.get_expiration()
 
-    if "marked.txt" in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)):
+    if urlobj.is_processed():
         status['processed'] = True
     else:
         status['processed'] = False
 
     status['downloads_remaining'] = settings.DOWNLOAD_LIMIT - urlobj.down_count
 
-    if urlobj.down_count < settings.DOWNLOAD_LIMIT:
+    if urlobj.is_downloadable():
         status['downloadable'] = True
     else:
         status['downloadable'] = False
@@ -220,31 +203,23 @@ def download(request, url):
 
     urlobj = ActiveURL.objects.get(url=url)
 
-    if urlobj.down_count >= settings.DOWNLOAD_LIMIT:
+    if not urlobj.is_downloadable():
         #to limit number of download attempts, for security
         urlTools.expire_url(url)
         return JsonResponse({"Download":'limit reached'})
     else:
-        urlobj.down_count += 1
-        urlobj.save()
+        urlobj.inc_down_count()
 
-    if urlobj.expired == True:
-        #check if it is expired, delete dir, redirect to home
-        urlTools.expire_url(url)
-        return JsonResponse({"Download":'url expired'})
-
-    expiration = urlobj.created + timedelta(minutes=settings.EXPIRATION_TIME_LIMIT)
-
-    if timezone.now() > expiration:
+    if urlobj.is_expired():
         #url has expired, mark as expired, delete dirs, redirect to homepage
         urlTools.expire_url(url)
         return JsonResponse({"Download":'url expired'})
 
-    if url not in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')):
+    if not urlTools.url_in_media(url):
         urlTools.expire_url(url)
         return JsonResponse({"Download":'url not found'})
 
-    if "marked.txt" not in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)):
+    if urlobj.is_processed():
         return JsonResponse({"Download":'url not processed'})
 
     #download if processed
@@ -264,11 +239,11 @@ def done(request, url):
     '''
         This method removes any transaction data for a given url
     '''
-    if urlTools.validate_url_in_db(url) or urlTools.validate_url_in_media(url):
+    if urlTools.validate_url_in_db(url) or urlTools.url_in_media(url):
         # Check that the url is present in either location
         if urlTools.validate_url_in_db(url):
             urlTools.expire_url(url)
-        if urlTools.validate_url_in_media(url):
+        if urlTools.url_in_media(url):
             mediaTools.delete_dir(url)
 
         return JsonResponse({"done":url})

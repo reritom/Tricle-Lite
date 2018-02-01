@@ -9,7 +9,7 @@ def validate_url_request(url):
         If it doesn't exist in db, continue validation but return error
         If it doesn't exist in /media, return error
     '''
-    return validate_url_in_db(url) and validate_url_in_media(url)
+    return validate_url_in_db(url) and url_in_media(url)
 
 def validate_url_in_db(url):
     '''
@@ -19,7 +19,7 @@ def validate_url_in_db(url):
     return ActiveURL.objects.filter(url=url).exists()
 
 
-def validate_url_in_media(url):
+def url_in_media(url):
     '''
         This function returns true if the url is in media
         :returns: Bool
