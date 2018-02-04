@@ -10,17 +10,26 @@
       </head>
   <body>
 
-    <div class="roger">
-      <div>
-        hello
+    <div class="pos-f-t">
+      <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark p-4">
+          <h4 class="text-white">Tricle-lite</h4>
+          <span class="text-muted">Hide in plain sight.</span>
+        </div>
       </div>
+      <nav class="navbar navbar-dark bg-dark justify-content-between">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div>
+          <button type="button" class="btn btn-dark" name="button">Hello</button>
+          <button type="button" class="btn btn-dark" name="button">World</button>
+
+        </div>
+      </nav>
     </div>
 
     <div class="container">
-
-
-    <h1>Welcome</h1>
-
 
     <form id='form' enctype="multipart/form-data" method="POST">
         {% csrf_token %}
@@ -30,11 +39,6 @@
         <div class="form-group"><input id="K2" type="text" name="key_two" maxlength="256" class="form-control" title="" required placeholder="Enter your second key" id="id_key_two" /></div>
         <div class="form-group"><input id="K3" type="text" name="key_three" maxlength="256" class="form-control" title="" required placeholder="Enter your third key" id="id_key_three" /></div>
 
-        <div class="roger">
-          <div style="visibility:hidden;">
-            hello
-          </div>
-        </div>
         </div>
 
 
@@ -45,9 +49,6 @@
           <option value="Unscramble">Unscramble</option>
           </select>
           </div>
-        </div>
-
-        <div style="margin-top: 0px; margin-bottom:20px;">
 
         <div class="input-group">
                 <label class="input-group-btn">
@@ -60,10 +61,14 @@
 
           </div>
 
-        <input id="submit" class="btn btn-success btn-block btn-lg" type="submit" name="" value="Start">
+        <input id="submit" style="display:none;" type="submit" name="" value="Start">
       </form>
-      <button onclick="isDownloadable()" class="btn btn-info btn-block btn-lg" name="button">Download</button>
-      <button onclick="amDone()" id="doneButton" class="btn btn-info btn-block btn-lg" name="button">Done</button>
+
+      <div class="btn-group d-flex" role="group" aria-label="Basic example">
+      <button onclick="startOrRestart()" id="startButton" class="btn btn-primary w-100" name="button">Start2</button>
+      <button onclick="isDownloadable()" class="btn btn-default w-100" name="button">Download</button>
+      <button onclick="amDone()" id="doneButton" class="btn btn-default w-100" name="button">Done</button>
+      </div>
 
       <div id="errorDiv" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: None;">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">

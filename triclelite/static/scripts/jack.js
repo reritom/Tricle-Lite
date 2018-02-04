@@ -3,7 +3,8 @@ $(document).ready(function() {
       TODO
       - Add check before download to see if this valid
     */
-    urlId = false // Global variable. Gets reset on 'Done'
+    urlId = false; // Global variable. Gets reset on 'Done'
+    started = false;
 
     $("#submit").click(function(e) {
         /*
@@ -161,4 +162,35 @@ function successHandler() {
     */
     $("#errorDiv").hide();
     $("#errorMessage").html("");
+}
+
+function startOrRestart() {
+    console.log("In SOR");
+    console.log(started);
+    if (started === false) {
+      console.log("Started is false");
+      if (true === true) {
+        console.log("Validated is true");
+        // Click the form submit
+        $('#submit')[0].click();
+
+        if (urlId != false) {
+          // If successful, started = true
+          started = !started;
+
+          // Rename the start button to restart
+            $('#submit').html("Restart");
+        }
+      }
+
+    }
+    else if (started == true){
+      // Remove the urlId
+      urlId = false;
+
+      // Rename the button to start
+      $('#submit').html("Start");
+
+      started = !started;
+    };
 }
