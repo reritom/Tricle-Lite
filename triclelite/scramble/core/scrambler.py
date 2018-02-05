@@ -2,8 +2,27 @@ class ScrambleObject():
     '''
         This class handles the [un]/scrambling an individual item.
     '''
-    
+
     def __init__(self):
+        mode = None
+        pass
+
+    def isScramble(self):
+        '''
+            Set the mode to scramble
+        '''
+        self.mode = "Scramble"
+
+    def isUnscramble(self):
+        '''
+            Set the mode to scramble
+        '''
+        self.mode = "Unscramble"
+
+    def run(self):
+        '''
+            This method runs the process
+        '''
         pass
 
     def generateSeeds(self):
