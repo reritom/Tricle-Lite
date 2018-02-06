@@ -49,6 +49,7 @@ class ScramblerManager():
     def scrambleFile(self):
         '''
             This method receives a file and scrambles it
+            https://stackoverflow.com/questions/865115/how-do-i-correctly-clean-up-a-python-object
         '''
         instance = ScrambleObject()
         instance.isScramble()
@@ -61,3 +62,4 @@ class ScramblerManager():
         '''
             This method receives a file to unscramble
         '''
+        pass
