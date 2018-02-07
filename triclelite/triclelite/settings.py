@@ -34,10 +34,12 @@ if DEPLOYSTAT == True:
     SECURE_SSL_REDIRECT = True
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
+    PHASE="PROD"
 else:
     ALLOWED_HOSTS = []
     DEBUG = True
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+    PHASE="LOCAL"
 
 # Internal settings
 
