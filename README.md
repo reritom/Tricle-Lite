@@ -8,4 +8,8 @@
 - Password for zipfile if phase isnt local
 - Link to GitHub in dropdown
 - Delete files once processed
+- Create /iaw (cleanup) view
+- Create /hard (delete and expire everything) view
 
+#Improvements
+- Use React instead of controlling views and states just with JQuery
