@@ -13,3 +13,8 @@
 
 #Improvements
 - Use React instead of controlling views and states just with JQuery
+
+| Task | Description | In Progress | Done |
+| --- | --- | --- | --- |
+| `1` | Add downloads remaining and expiration countdown to download div | [ ] | [ ] |
+| `2` | Show file differences that **haven't been** staged | [ ] | [ ] |
