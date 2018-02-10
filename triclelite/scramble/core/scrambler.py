@@ -6,6 +6,9 @@ class ScrambleObject():
     '''
         This class handles the [un]/scrambling an individual item.
     '''
+    def __enter__(self):
+        print("In object enter")
+        return self
 
     def __init__(self):
         self.mode = None
@@ -22,6 +25,12 @@ class ScrambleObject():
         # The number of elements that the image is split into in each dimension based on the gridSize
         self.xNum = None
         self.yNum = None
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        '''
+            Exit layer
+        '''
+        print("In object exit")
 
     def validateInit(self):
         '''

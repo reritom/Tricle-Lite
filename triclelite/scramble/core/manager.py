@@ -146,19 +146,20 @@ class ScramblerManager():
             https://stackoverflow.com/questions/865115/how-do-i-correctly-clean-up-a-python-object
         '''
         print("In scrambleFile")
-        instance = ScrambleObject()
-        instance.isScramble()
-        instance.keysAre(self.keys)
-        instance.imageIs(image)
-        return instance.runAndReturn()
+        with ScrambleObject() as instance:
+            instance.isScramble()
+            instance.keysAre(self.keys)
+            instance.imageIs(image)
+            return instance.runAndReturn()
 
 
     def unscrambleFile(self, image):
         '''
             This method receives a file to unscramble
         '''
-        instance = ScrambleObject()
-        instance.isUnscramble()
-        instance.keysAre(self.keys)
-        instance.imageIs(image)
-        return instance.runAndReturn()
+        print("In unscrambleFile")
+        with ScrambleObject() as instance:
+            instance.isUnscramble()
+            instance.keysAre(self.keys)
+            instance.imageIs(image)
+            return instance.runAndReturn()
