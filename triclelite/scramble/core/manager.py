@@ -12,6 +12,10 @@ class ScramblerManager():
         This class handles the scrambling, unscrambling and saving of multiple images
     '''
 
+    def __enter__(self):
+        print("Entering manager object")
+        return self
+
     def __init__(self, mediaPath, url):
         print("Manager init")
         self.keys = list()
@@ -25,6 +29,8 @@ class ScramblerManager():
         self.keys = None
         self.mode = None
 
+    def __exit__(self, exc_type, exc_value, traceback):
+        print("Exiting manager")
 
     def run(self):
         '''

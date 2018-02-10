@@ -97,8 +97,8 @@ def load(request, url):
 
     #process files
     print("At Manager")
-    manager = ScramblerManager(media_path, url)
-    manager.run()
+    with ScramblerManager(media_path, url) as manager:
+        manager.run()
 
     #mark files as processed
     urlobj.set_processed()
