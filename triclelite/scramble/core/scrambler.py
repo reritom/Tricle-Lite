@@ -11,7 +11,7 @@ class ScrambleObject():
         self.mode = None
         self.keys = dict()
         self.seeds = list()
-        self.encodeArray = list()
+        self.encodedArrays = [None, None, None]
 
         self.original = None
         self.proc_round_one = None
@@ -27,7 +27,10 @@ class ScrambleObject():
         '''
             Validate that the keys, mode, and original image have been set before running
         '''
-        return (self.mode not None and self.original not None and self.keys and self.original not None)
+        if ((self.mode is not None) and (self.original is not None) and (self.keys)):
+            return True
+        else:
+            return False
 
     def imageIs(self, image):
         '''
@@ -38,8 +41,8 @@ class ScrambleObject():
         self.proc_round_two = np.copy(self.original)
 
         # Set the image dimensions
-        self.colx = image.shape[0]
-        self.rowy = image.shape[1]
+        self.colx = self.original.shape[0]
+        self.rowy = self.original.shape[1]
 
     def isScramble(self):
         '''
@@ -67,15 +70,20 @@ class ScrambleObject():
         if not self.validateInit():
             return False
 
+        print("Generating seeds")
         self.generateSeeds()
-        self.encodeArray()
 
-        if self.isScramble():
-            self.scramble()
-        elif self.isUnscramble():
-            self.unscramble()
+        print("Encoding arrays")
+        self.encodeArrays()
 
-        return self.proc_round_two
+        print("Encoded arrays are: " + str(self.encodedArrays))
+
+        if self.mode == "Scramble":
+            print("Scrambling")
+            return self.scramble()
+        elif self.mode == "Unscramble":
+            print("Unscrambling")
+            return self.unscramble()
 
     def generateSeeds(self):
         '''
@@ -109,31 +117,31 @@ class ScrambleObject():
 
             self.seeds.append(this_seed)
 
-    def encodeArray(self):
+    def encodeArrays(self):
         '''
             This method encodes an array for each seed
         '''
-        self.encodeArray[0] = list(range(0,colx))
-        self.encodeArray[1] = list(range(0,rowy))
+        self.encodedArrays[0] = list(range(0, self.colx))
+        self.encodedArrays[1] = list(range(0, self.rowy))
 
         self.xNum = int((self.colx - self.colx%self.gridSize)/self.gridSize)
         self.yNum = int((self.rowy - self.rowy%self.gridSize)/self.gridSize)
 
-        self.encodeArray[2] = list(range(0, self.xNum*self.yNum))
+        self.encodedArrays[2] = list(range(0, self.xNum*self.yNum))
 
-        random.Random(seeds[0]).shuffle(self.encodeArray[0])
-        random.Random(seeds[1]).shuffle(self.encodeArray[1])
-        random.Random(seeds[2]).shuffle(self.encodeArray[2])
+        random.Random(self.seeds[0]).shuffle(self.encodedArrays[0])
+        random.Random(self.seeds[1]).shuffle(self.encodedArrays[1])
+        random.Random(self.seeds[2]).shuffle(self.encodedArrays[2])
 
     def scramble(self):
         '''
             This method scrambles the image
         '''
 
-        # Switch the x and y indices with those of the encodeArray (encodeArray[0] for x, encodeArray[1] for y)
+        # Switch the x and y indices with those of the encodedArrays (encodedArrays[0] for x, encodedArrays[1] for y)
         for x in range(self.colx):
             for y in range(self.rowy):
-                self.proc_round_one[x][y] = self.original[self.encodeArray[0][x]][self.encodeArray[1][y]]
+                self.proc_round_one[x][y] = self.original[self.encodedArrays[0][x]][self.encodedArrays[1][y]]
 
         self.proc_round_two = np.copy(self.proc_round_one)
 
@@ -141,7 +149,7 @@ class ScrambleObject():
         for x in range(self.xNum):
             for y in range(self.yNum):
                 # TODO - Deconstruct this logic
-                blue = self.encodeArray[2][ind]
+                blue = self.encodedArrays[2][ind]
                 xEn = blue%self.xNum
                 yEn = int((blue - xEn)/self.xNum)
 
@@ -158,7 +166,7 @@ class ScrambleObject():
         ind = 0
         for x in range(self.xNum):
             for y in range(self.yNum):
-                blue = self.encodeArray[2][ind]
+                blue = self.encodedArrays[2][ind]
                 xEn = blue%self.xNum
                 yEn = int((blue - xEn)/self.xNum)
 
@@ -170,6 +178,6 @@ class ScrambleObject():
 
         for x in range(self.colx):
             for y in range(self.rowy):
-                self.proc_round_two[self.encodeArray[0][x]][self.encodeArray[1][y]] = self.proc_round_one[x][y]
+                self.proc_round_two[self.encodedArrays[0][x]][self.encodedArrays[1][y]] = self.proc_round_one[x][y]
 
         return Image.fromarray(self.proc_round_two)

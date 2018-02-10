@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from scramble.scramblecore import scrambler
 from scramble.tools import mediaTools, urlTools, commonTools
+from scramble.core.manager import ScramblerManager
 from scramble.models import ActiveURL, ExpiredURL
 from scramble.forms import ScrambleForm
 from django.conf import settings
@@ -94,51 +95,10 @@ def load(request, url):
 
     media_path = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
 
-    try:
-        with open(os.path.join(media_path, 'data'), 'rb') as fp:
-            form = pickle.load(fp)
-    except:
-        return JsonResponse({"load":'data load fail'})
-
-    timehash = sha1(str(datetime.now().isoformat()).encode("UTF-8")).hexdigest()[:5]
-    zipname = timehash + ".zip"
-    zipadr = os.path.join(media_path, zipname)
-    zf = zipfile.ZipFile(zipadr, mode='w')
-
-
     #process files
-    for f in os.listdir(media_path):
-        if f.lower().endswith(('bmp', 'jpg', 'png', 'jpeg')):
-            image = Image.open(os.path.join(media_path, f))
-            final = scrambler(form['mode'], form['k1'], form['k2'], form['k3'], image)
-
-            if form['mode'] == "Scramble":
-                name = str(Path(f).with_suffix('')) + ".BMP"
-                final.save(os.path.join(media_path, name))
-            else:
-                try:
-                    name = str(Path(f).with_suffix('')) + ".JPG"
-                    final.save(os.path.join(media_path, name), format="JPEG", subsampling=0, quality=100)
-                except Exception as e:
-                    print("Error saving as JPG for user " + request.user + " in interaction " + urlobj.url + " : " + e)
-                    try:
-                        name = str(Path(f).with_suffix('')) + ".PNG"
-                        final.save(os.path.join(media_path, name), format="PNG", subsampling=0, quality=100)
-                    except Exception as e:
-                        print("Error saving as PNG for user " + request.user + " in interaction " + urlobj.url + " : " + e)
-                        try:
-                            name = str(Path(f).with_suffix('')) + ".BMP"
-                            final.save(os.path.join(media_path, name))
-                        except Exception as e:
-                            print("Error saving as BMP for user " + request.user + " in interaction " + urlobj.url + " : " + e)
-                            print("Unable to save, expiring " + urlobj.url)
-                            urlTools.expire_url(url)
-
-            zf = zipfile.ZipFile(zipadr, mode='a')
-            try:
-                zf.write(os.path.join(media_path, name), arcname=name)
-            finally:
-                zf.close()
+    print("At Manager")
+    manager = ScramblerManager(media_path, url)
+    manager.run()
 
     #mark files as processed
     urlobj.set_processed()
