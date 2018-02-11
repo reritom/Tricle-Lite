@@ -1,9 +1,10 @@
 from scramble.core.scrambler import ScrambleObject
 from scramble.tools import mediaTools, urlTools, commonTools
+from scramble.models import ActiveURL, ZipLock, KeyChain
+
 from datetime import datetime, timedelta
 from hashlib import sha1
 from pathlib import Path
-
 import shutil, zipfile, os, pickle
 from PIL import Image
 
@@ -25,12 +26,45 @@ class ScramblerManager():
         self.zipname = None
         self.zipadr = None
         self.zipfile = None
+        self.zipcode = None # If a ZipLock is found, this is set to the value
 
         self.keys = None
         self.mode = None
 
+        self.urlobj = None
+        self.keychainobj = None
+        self.ziplockobj = None
+
+        self.retrieveActiveUrl()
+        self.retrieveKeyChain()
+        self.retrieveZipLock()
+
     def __exit__(self, exc_type, exc_value, traceback):
         print("Exiting manager")
+
+    def retrieveKeyChain(self):
+        '''
+            This method retrieves the keychain for this url
+        '''
+        pass
+
+    def retrieveZipLock(self):
+        '''
+            This method attempts to retrieve the ziplock for this url (optional)
+        '''
+        print("Retrieving ziplock")
+        try:
+            self.ziplockobj = ZipLock.objects.get(active=self.urlobj)
+            self.zipcode = self.ziplockobj.zipcode
+        except:
+            print("No ZipLock object found")
+
+    def retrieveActiveUrl(self):
+        '''
+            This method retrieves the ActiveUrl for this object
+        '''
+        print("Retrieving ActiveUrl")
+        self.urlobj = ActiveURL.objects.get(url=self.url)
 
     def run(self):
         '''
@@ -56,7 +90,22 @@ class ScramblerManager():
                 self.saveFile(f, processedImage)
 
         self.deletePreprocessed()
-        #save the zip (optional password if in data)
+        if self.ziplockobj is not None:
+            print("Deleting the Ziplock")
+            self.ziplockobj.delete()
+
+    def protectZip(self):
+        '''
+            This method adds the password to the Zip
+        '''
+        print("In protectZip")
+        if self.zipcode is not None:
+            print("Protecting file")
+            zf = zipfile.ZipFile(self.zipadr)
+            zf.setpassword(self.zipcode.encode('utf-8'))
+            zf.close()
+        else:
+            print("Not protecting file")
 
     def deletePreprocessed(self):
         '''
@@ -113,7 +162,14 @@ class ScramblerManager():
         timehash = sha1(str(datetime.now().isoformat()).encode("UTF-8")).hexdigest()[:5]
         self.zipname = timehash + ".zip"
         self.zipadr = os.path.join(self.mediaPath, self.zipname)
-        zf = zipfile.ZipFile(self.zipadr, mode='w')
+
+        if self.zipcode is not None:
+            print("Protecting file")
+            zf = zipfile.ZipFile(self.zipadr, mode='w')
+            zf.setpassword(self.zipcode.encode('utf-8'))
+        else:
+            print("Not protecting file")
+            zf = zipfile.ZipFile(self.zipadr, mode='w')
 
 
     def saveFile(self, filename, final):

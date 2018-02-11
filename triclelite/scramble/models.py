@@ -25,10 +25,13 @@ class ActiveURL(models.Model):
         return self.expired
 
     def is_processed(self):
+        print("Getting processed status")
         return self.processed
 
     def set_processed(self):
+        print("Setting urlobj to processed")
         self.processed = True
+        self.save()
 
     def is_expired(self):
         expiration = self.get_expiration()
@@ -115,6 +118,7 @@ class ZipLock(models.Model):
         '''
             Expected a code in string format
         '''
+        print("setting zipcode to " + code)
         self.zipcode = code
 
     def getZipcode(self):

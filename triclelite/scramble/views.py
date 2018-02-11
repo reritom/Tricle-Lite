@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from scramble.scramblecore import scrambler
 from scramble.tools import mediaTools, urlTools, commonTools
 from scramble.core.manager import ScramblerManager
-from scramble.models import ActiveURL, ExpiredURL
+from scramble.models import ActiveURL, ExpiredURL, ZipLock, KeyChain
 from scramble.forms import ScrambleForm
 from django.conf import settings
 from django.utils import timezone
@@ -20,7 +20,7 @@ from PIL import Image
 def start(request):
     if request.method == 'GET':
         form = ScrambleForm
-        return render(request, 'scramble/home.html', {'form':form})
+        return render(request, 'scramble/home.html', {'form':form, 'phase':settings.PHASE})
     if request.method == 'POST':
         return post(request)
     #transaction_daemon()
@@ -57,6 +57,14 @@ def post(request):
     if formdat['mode'] == 'Unscramble':
         urlobj.mode = 'Unscramble'
     urlobj.save()
+
+    # Create ZipCode object
+    if form.get('zipcode', False):
+        zipobj = ZipLock.objects.create(active=urlobj)
+        zipobj.setZipcode(form['zipcode'])
+        zipobj.save()
+
+    # TODO - Create KeyChain object
 
     # Create the dir for storing the files
     media_path = mediaTools.make_dir(this_url)
@@ -179,7 +187,7 @@ def download(request, url):
         urlTools.expire_url(url)
         return JsonResponse({"Download":'url not found'})
 
-    if urlobj.is_processed():
+    if not urlobj.is_processed():
         return JsonResponse({"Download":'url not processed'})
 
     #download if processed

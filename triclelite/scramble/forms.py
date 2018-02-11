@@ -8,4 +8,6 @@ class ScrambleForm(forms.Form):
     CHOICES=[('Scramble','Scramble'), ('Unscramble','Unscramble')]
     mode = forms.ChoiceField(choices=CHOICES, widget=forms.Select(attrs={'class':'regDropDown'}))
 
+    zipcode = forms.CharField(label='', required=False, max_length=256, widget=forms.TextInput(attrs={'placeholder': 'Enter your zip file password'}))
+
     images = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True,}))

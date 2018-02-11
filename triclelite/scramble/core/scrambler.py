@@ -79,19 +79,12 @@ class ScrambleObject():
         if not self.validateInit():
             return False
 
-        print("Generating seeds")
         self.generateSeeds()
-
-        print("Encoding arrays")
         self.encodeArrays()
 
-        print("Encoded arrays are: " + str(self.encodedArrays))
-
         if self.mode == "Scramble":
-            print("Scrambling")
             return self.scramble()
         elif self.mode == "Unscramble":
-            print("Unscrambling")
             return self.unscramble()
 
     def generateSeeds(self):
