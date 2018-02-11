@@ -1,1 +1,2 @@
-If phase is not local, require a password for the zip
+# If phase is not local, require a password for the zip
+# Bug with download limit being reached causing JSON reload instead of warning message

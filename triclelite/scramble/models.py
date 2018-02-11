@@ -79,3 +79,43 @@ class ExpiredURL(models.Model):
 
     def __str__(self):
         return self.url
+
+class KeyChain(models.Model):
+    active = models.OneToOneField(ActiveURL,
+                                  on_delete=models.CASCADE,
+                                  primary_key=True)
+    key_one = models.CharField(default=0, max_length=255)
+    key_two = models.CharField(default=0, max_length=255)
+    key_three = models.CharField(default=0, max_length=255)
+
+    def __str__(self):
+        return self.active.url + "_KC"
+
+    def setKeys(self, keys):
+        '''
+            This method sets the keys, expected in a list format
+        '''
+        key_one = keys[0]
+        key_two = keys[1]
+        key_three = keys[2]
+
+    def getKeys(self):
+        return [self.key_one, self.key_two, self.key_three]
+
+class ZipLock(models.Model):
+    active = models.OneToOneField(ActiveURL,
+                                  on_delete=models.CASCADE,
+                                  primary_key=True)
+    zipcode = models.CharField(default=0, max_length=255)
+
+    def __str__(self):
+        return self.active.url + "_ZL"
+
+    def setZipcode(self, code):
+        '''
+            Expected a code in string format
+        '''
+        self.zipcode = code
+
+    def getZipcode(self):
+        return self.zipcode
