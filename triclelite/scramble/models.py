@@ -98,9 +98,11 @@ class KeyChain(models.Model):
         '''
             This method sets the keys, expected in a list format
         '''
-        key_one = keys[0]
-        key_two = keys[1]
-        key_three = keys[2]
+        print("Setting KeyChain keys")
+        self.key_one = keys[0]
+        self.key_two = keys[1]
+        self.key_three = keys[2]
+        self.save()
 
     def getKeys(self):
         return [self.key_one, self.key_two, self.key_three]

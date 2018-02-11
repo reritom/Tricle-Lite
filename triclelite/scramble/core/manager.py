@@ -46,7 +46,11 @@ class ScramblerManager():
         '''
             This method retrieves the keychain for this url
         '''
-        pass
+        print("Retrieving KeyChain")
+        try:
+            self.keychainobj = KeyChain.objects.get(active=self.urlobj)
+        except:
+            print("No KeyChain object found")
 
     def retrieveZipLock(self):
         '''
@@ -65,6 +69,8 @@ class ScramblerManager():
         '''
         print("Retrieving ActiveUrl")
         self.urlobj = ActiveURL.objects.get(url=self.url)
+        print("Setting mode as " + self.urlobj.mode)
+        self.mode = self.urlobj.mode
 
     def run(self):
         '''
@@ -74,7 +80,7 @@ class ScramblerManager():
         print("In Run")
 
         if not self.validatePathContents(): return False
-        if not self.readData(): return False
+        if not self.setKeysFromKeyChain(): return False
         print("Passed validation")
         self.generateZip()
 
@@ -90,9 +96,14 @@ class ScramblerManager():
                 self.saveFile(f, processedImage)
 
         self.deletePreprocessed()
+
+        # Delete the ZipLock
         if self.ziplockobj is not None:
             print("Deleting the Ziplock")
             self.ziplockobj.delete()
+
+        # Mark as processed
+        self.urlobj.set_processed()
 
     def protectZip(self):
         '''
@@ -126,6 +137,17 @@ class ScramblerManager():
             and that there are files to process
         '''
         return True
+
+    def setKeysFromKeyChain(self):
+        '''
+            This method sets the keys from the KeyChain object
+        '''
+        try:
+            self.keys = self.keychainobj.getKeys()
+            return True
+        except:
+            print("Failed to get keys from keychain")
+            return False
 
     def readData(self):
         '''

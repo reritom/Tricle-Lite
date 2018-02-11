@@ -64,14 +64,13 @@ def post(request):
         zipobj.setZipcode(form['zipcode'])
         zipobj.save()
 
-    # TODO - Create KeyChain object
+    # Create KeyChain object
+    keyobj = KeyChain.objects.create(active=urlobj)
+    keyobj.setKeys([formdat['k1'], formdat['k2'], formdat['k3']])
+    keyobj.save()
 
     # Create the dir for storing the files
     media_path = mediaTools.make_dir(this_url)
-
-    # Store the keys
-    with open(os.path.join(media_path, 'data'), 'wb') as fp:
-        pickle.dump(formdat, fp)
 
     # Store the files
     for f in request.FILES.getlist('images'):
@@ -108,14 +107,6 @@ def load(request, url):
     with ScramblerManager(media_path, url) as manager:
         manager.run()
 
-    #mark files as processed
-    urlobj.set_processed()
-    '''
-    # Remove the unprocessed files and the data file
-    for filename in os.listdir(media_path):
-        if not (filename.endswith('.txt') or filename.endswith('.zip')):
-            mediaTools.delete_file(os.path.join(media_path, filename))
-    '''
     return JsonResponse({"load":True, "url":url})
 
 def status(request, url):
