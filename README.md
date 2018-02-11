@@ -13,6 +13,7 @@
 | `6` | Delete files once processed | <ul><li>- [ ] </li></ul> | <ul><li>- [x] </li></ul> |
 | `7` | Create /iaw (cleanup) view | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 | `8` | Create /hard (delete and expire everything) view | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
+| `9` | Create `pre` and `post` dirs to store files in | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 
 ## Improvements
 - Use React instead of controlling views and states just with JQuery
