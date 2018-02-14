@@ -15,8 +15,8 @@
 | `8` | Create /hard (delete and expire everything) view | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 | `9` | Create `pre` and `post` dirs to store files in | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 | `10` | Add v2 seedgen using hashlib and mixed keys | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
-| `11` | Move form post to separate endpoint | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
-| `12` | Use the zip token to validate the /down request, make it a POST | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
+| `11` | Move form post to separate endpoint | <ul><li>- [ ] </li></ul> | <ul><li>- [x] </li></ul> |
+| `12` | Use the zip token to validate the /down request, make it a POST | <ul><li>- [ ] </li></ul> | <ul><li>- [x] </li></ul> |
 | `13` | Encrypt the `pre` and `post` directories | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 
 ## Bugs
