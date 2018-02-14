@@ -5,6 +5,7 @@ $(document).ready(function() {
     */
     urlId = false; // Global variable. Gets reset on 'Done'
     started = false;
+    sessionToken = false;
 
     $("#submit").click(function(e) {
         /*
@@ -12,13 +13,18 @@ $(document).ready(function() {
           If successful, the loader is automatically called.
         */
         e.preventDefault();
-        var formData = new FormData($('form')[0])
+        sessionToken = generateToken();
+        $("#RT").val(sessionToken);
+        var formData = new FormData($('form')[0]);
+        /*
+        // For seeing the form data
         for (var pair of formData.entries()) {
             console.log(pair[0] + ', ' + pair[1]);
+        */
         }
         $.ajax({
             type: "POST",
-            url: "/",
+            url: "/post",
             data: formData,
             processData: false,
             contentType: false,
@@ -76,7 +82,7 @@ function startDown() {
         return
     };
     console.log("Downloading file");
-    window.location = "/" + "down" + "/" + urlId + "/";
+    window.location = "/" + "down" + "/" + urlId + "/" + "?" + "token=" + sessionToken;
 }
 
 function amDone() {
@@ -193,4 +199,18 @@ function startOrRestart() {
 
       started = !started;
     };
+}
+
+function generateToken() {
+  console.log("Generation token");
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  )
+}
+
+function retrieveForm() {
+  console.log("Creating retrieve form");
+  var formData = new FormData();
+  formData.append("retrieve_token", sessionToken);
+  return formData
 }

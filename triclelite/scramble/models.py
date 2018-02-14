@@ -14,6 +14,7 @@ class ActiveURL(models.Model):
     number_of_files = models.IntegerField(default=0)
     mode = models.CharField(default="Scramble", max_length=255)
     down_count = models.IntegerField(default=0)
+    sessionToken = models.CharField(default=0, max_length=255)
 
     def __str__(self):
         return self.url
@@ -23,6 +24,19 @@ class ActiveURL(models.Model):
 
     def validate(self):
         return self.expired
+
+    def getToken(self):
+        return self.sessionToken
+
+    def validateToken(self, token):
+        print("SessionToken: " + self.sessionToken)
+        print("ProvidedToken: " + token)
+        return self.sessionToken == token
+
+    def setToken(self, token):
+        self.sessionToken = token
+        self.save()
+        return
 
     def is_processed(self):
         print("Getting processed status")

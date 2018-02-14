@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from scramble.scramblecore import scrambler
 from scramble.tools import mediaTools, urlTools, commonTools
@@ -18,13 +19,8 @@ from PIL import Image
 # Create your views here.
 
 def start(request):
-    if request.method == 'GET':
-        form = ScrambleForm
-        return render(request, 'scramble/home.html', {'form':form, 'phase':settings.PHASE})
-    if request.method == 'POST':
-        return post(request)
-    #transaction_daemon()
-    return render(request, 'scramble/home.html')
+    form = ScrambleForm
+    return render(request, 'scramble/home.html', {'form':form, 'phase':settings.PHASE})
 
 def post(request):
     '''
@@ -56,6 +52,7 @@ def post(request):
     this_url = urlobj.get_url()
     if formdat['mode'] == 'Unscramble':
         urlobj.mode = 'Unscramble'
+    urlobj.setToken(form['retrieve_token'])
     urlobj.save()
 
     # Create ZipCode object
@@ -153,15 +150,27 @@ def status(request, url):
 
     return JsonResponse(status)
 
+@csrf_exempt
 def download(request, url):
     '''
         This method retrieves the zipped download file
     '''
+    print("In download")
     if not urlTools.validate_url_request(url):
         return JsonResponse({"Download":False})
 
     urlobj = ActiveURL.objects.get(url=url)
 
+    # Validate the request token
+    token = request.GET.get('token', False)
+
+    if token is False:
+        return JsonResponse({"Download":False, "Detail":"Missing token"})
+
+    if not urlobj.validateToken(token):
+        return JsonResponse({"Download":False, "Detail":"Invalid token"})
+
+    # Valiate download-ability
     if not urlobj.is_downloadable():
         #to limit number of download attempts, for security
         urlTools.expire_url(url)
@@ -191,8 +200,6 @@ def download(request, url):
                          content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=' + prezipped
     return response
-
-    return JsonResponse({"Download":url})
 
 def done(request, url):
     '''
