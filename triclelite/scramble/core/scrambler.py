@@ -91,6 +91,7 @@ class ScrambleObject():
         '''
             This method generates a seed for each key
         '''
+        seeds = list()
         for i in range(3):
             this_key = self.keys[i]
 
@@ -116,8 +117,14 @@ class ScrambleObject():
 
             # Plus the uniVal and the length of the key
             this_seed = this_seed + str(uniVal) + str(len(this_key))
+            seeds.append(this_seed)
 
-            self.seeds.append(this_seed)
+        seeds[0] = seeds[0] + seeds[1][1:] + seeds[2][1:]
+        seeds[1] = seeds[1] + seeds[0][1:] + seeds[2][1:]
+        seeds[2] = seeds[2] + seeds[0][1:] + seeds[1][1:]
+
+        for seed in seeds:
+            self.seeds.append(seed)
 
     def encodeArrays(self):
         '''

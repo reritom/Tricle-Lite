@@ -20,8 +20,9 @@ $(document).ready(function() {
         // For seeing the form data
         for (var pair of formData.entries()) {
             console.log(pair[0] + ', ' + pair[1]);
-        */
+
         }
+        */
         $.ajax({
             type: "POST",
             url: "/post",
