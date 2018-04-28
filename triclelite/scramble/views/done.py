@@ -12,6 +12,6 @@ def done(request, url):
         if urlTools.url_in_media(url):
             mediaTools.delete_dir(url)
 
-        return JsonResponse({"done":url})
+        return JsonResponse({"status":True})
     else:
-        return JsonResponse({"done":False})
+        return JsonResponse({"status":False, "message":"Invalid url"})

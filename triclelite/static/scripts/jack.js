@@ -32,7 +32,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(result) {
                 console.log(result);
-                if (result.post === true) {
+                if (result.status === true) {
                     urlId = result.url;
                     startLoad(urlId);
                 }
@@ -64,7 +64,7 @@ function startLoad(urlId) {
             console.log(result);
             //Unhide download button
             // Start auto-download
-            if (result.load === true) {
+            if (result.status === true) {
                 urlId = result.url;
                 isDownloadable();
             }

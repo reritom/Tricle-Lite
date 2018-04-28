@@ -19,7 +19,7 @@ def load(request, url):
     '''
 
     if not urlTools.validate_url_request(url):
-        return JsonResponse({"load":False})
+        return JsonResponse({"status":False, "message":"Invalid url"})
 
     urlobj = ActiveURL.objects.get(url=url)
 
@@ -28,7 +28,7 @@ def load(request, url):
         urlTools.expire_url(url)
 
     if urlobj.is_processed():
-        return JsonResponse({"load":"processed"})
+        return JsonResponse({"status":False, "message":"Already loaded"})
 
     media_path = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
 
@@ -37,4 +37,4 @@ def load(request, url):
     with ScramblerManager(media_path, url) as manager:
         manager.run()
 
-    return JsonResponse({"load":True, "url":url})
+    return JsonResponse({"status":True, "url":url})

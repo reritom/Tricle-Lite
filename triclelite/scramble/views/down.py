@@ -16,7 +16,7 @@ def download(request, url):
     '''
     print("In download")
     if not urlTools.validate_url_request(url):
-        return JsonResponse({"Download":False})
+        return JsonResponse({"status":False})
 
     urlobj = ActiveURL.objects.get(url=url)
 
@@ -24,30 +24,30 @@ def download(request, url):
     token = request.GET.get('token', False)
 
     if token is False:
-        return JsonResponse({"Download":False, "Detail":"Missing token"})
+        return JsonResponse({"status":False, "message":"Missing token"})
 
     if not urlobj.validateToken(token):
-        return JsonResponse({"Download":False, "Detail":"Invalid token"})
+        return JsonResponse({"status":False, "message":"Invalid token"})
 
     # Valiate download-ability
     if not urlobj.is_downloadable():
         #to limit number of download attempts, for security
         urlTools.expire_url(url)
-        return JsonResponse({"Download":'limit reached'})
+        return JsonResponse({"status":False, "message":'limit reached'})
     else:
         urlobj.inc_down_count()
 
     if urlobj.is_expired():
         #url has expired, mark as expired, delete dirs, redirect to homepage
         urlTools.expire_url(url)
-        return JsonResponse({"Download":'url expired'})
+        return JsonResponse({"status":False, "message":'url expired'})
 
     if not urlTools.url_in_media(url):
         urlTools.expire_url(url)
-        return JsonResponse({"Download":'url not found'})
+        return JsonResponse({"status":False, "message":'url not found'})
 
     if not urlobj.is_processed():
-        return JsonResponse({"Download":'url not processed'})
+        return JsonResponse({"status":False, "message":'url not processed'})
 
     #download if processed
     for files in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)):
