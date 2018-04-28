@@ -25,7 +25,7 @@ $(document).ready(function() {
         */
         $.ajax({
             type: "POST",
-            url: "/post",
+            url: "api/post",
             data: formData,
             processData: false,
             contentType: false,
@@ -56,7 +56,7 @@ function startLoad(urlId) {
     };
     $.ajax({
         type: "GET",
-        url: "/" + "load" + "/" + urlId + "/",
+        url: "/api" + "/" + "load" + "/" + urlId + "/",
         processData: false,
         contentType: false,
         dataType: 'json',
@@ -83,7 +83,7 @@ function startDown() {
         return
     };
     console.log("Downloading file");
-    window.location = "/" + "down" + "/" + urlId + "/" + "?" + "token=" + sessionToken;
+    window.location = "/api/" + "down" + "/" + urlId + "/" + "?" + "token=" + sessionToken;
 }
 
 function amDone() {
@@ -96,7 +96,7 @@ function amDone() {
     console.log("Ending process");
     $.ajax({
         type: "GET",
-        url: "/" + "done" + "/" + urlId + "/",
+        url: "/api/" + "done" + "/" + urlId + "/",
         processData: false,
         contentType: false,
         dataType: 'json',
@@ -120,7 +120,7 @@ function isDownloadable(){
 
   $.ajax({
       type: "GET",
-      url: "/" + "status" + "/" + urlId + "/",
+      url: "/api/" + "status" + "/" + urlId + "/",
       processData: false,
       contentType: false,
       dataType: 'json',
