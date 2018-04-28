@@ -1,0 +1,84 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>TricleLite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="vuejs, django, crudapp, restapi">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<style>
+.flex-container-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+},
+.flex-container-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+},
+.box {
+  text-align: center;
+  display: inline-block;
+}
+</style>
+
+<body>
+
+  <!-- Bootstrap files -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <!-- Vue files -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+
+
+  <div class="pos-f-t">
+    <div class="collapse" id="navbarToggleExternalContent">
+      <div class="bg-dark p-4">
+        <h4 class="text-white">Tricle-lite</h4>
+        <span class="text-muted">Hide in plain sight.</span>
+      </div>
+    </div>
+    <nav class="navbar navbar-dark bg-dark justify-content-between">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div>
+        <button type="button" class="btn btn-dark" name="button">Hello</button>
+        <button type="button" class="btn btn-dark" name="button">World</button>
+      </div>
+    </nav>
+  </div>
+
+  <div id="VueContainer">
+    <div class="container">
+      <button @click="view='form'">Make form</button>
+        <button @click="view='end'">Make end</button>
+      <div id="FormView" v-if="view==='form'">
+          <form-tab></form-tab>
+      </div>
+
+      <div id="EndView"  v-if="view==='end'">
+        <end-tab></end-tab>
+      </div>
+
+      <div class="loading" v-if="loading===true">Loading&#8230;</div>
+    </div>
+  </div>
+
+
+</body>
+
+
+<script src="{% static 'src/scramble/js/main.js' %}"></script>
+
+</html>
