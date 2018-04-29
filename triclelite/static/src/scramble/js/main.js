@@ -1,4 +1,5 @@
 Vue.component('done-button', {
+  props: ['url'],
   template: `<div>
               <svg version="1.1"
                    baseProfile="full"
@@ -10,10 +11,17 @@ Vue.component('done-button', {
                 <text x="150" y="125" font-size="60" text-anchor="middle" fill="white">Done</text>
 
               </svg>
-            </div>`
+            </div>`,
+  methods: {
+    done: function () {
+      // Send done,using url.
+      //emit pulse to trigger page refresh
+    }
+  }
 })
 
 Vue.component('download-button', {
+  props: ['url'],
   template: `<div>
               <svg version="1.1"
                    baseProfile="full"
@@ -25,7 +33,13 @@ Vue.component('download-button', {
                 <text x="150" y="125" font-size="60" text-anchor="middle" fill="white">Download</text>
 
               </svg>
-            </div>`
+            </div>`,
+  methods: {
+    download: function() {
+      // checkStatus
+      // if ok, download
+    }
+  }
 })
 
 Vue.component('end-tab', {
@@ -43,26 +57,70 @@ Vue.component('end-tab', {
             </div>`
 })
 
+Vue.component('upload-handler', {
+  data: function () {
+    return {
+      uploadFieldName: "Photos",
+      ourFileList: []
+    }
+  },
+  template: `<div>
+              <div class="dropbox">
+                <input class="input-file" type="file" multiple :name="uploadFieldName" :disabled="isPosting" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"  accept="image/*">
+                <p v-if="isInitial">
+                  Drag your file(s) here to begin<br> or click to browse
+                </p>
+              </div>
+              <div v-for="file, index in ourFileList">
+              <p> Filename is {{file.name}}, index is {{index}}</p>
+            </div>`,
+  methods: {
+    filesChange: function(fieldName, fileList) {
+      // To handle new images being selected
+      this.ourFileList = fileList;
+    }
+  },
+  computed: {
+    isInitial() {
+      return this.ourFileList.length === 0
+    }
+  }
+})
+
 Vue.component('form-tab', {
-  props: ['noneyet'],
   data: function () {
     return {
       keyone: "",
       keytwo: "",
-      keythree: ""
+      keythree: "",
+      mode: "Scramble",
+      files: "",
+      url: ""
     }
   },
-  template: `<div class="flex-container-column">
+  template: `<div>
+            <div class="flex-container-column">
               <div class="box"><input v-model="keyone"></div>
               <div class="box"><input v-model="keytwo"></div>
               <div class="box"><input v-model="keythree"></div>
-            </div>`
+              </div>
+              <upload-handler></upload-handler>
+            </div>`,
+  methods: {
+    post: function() {
+      // Validate and post the form, emit the url
+    },
+    createToken: function() {
+      // Create the session token for downloading the files
+    }
+  }
 })
 
 new Vue({
   el: '#VueContainer',
   delimiters: ['[[',']]'],
   data: {
-  loading: false,
-view: 'form'}
-})
+    loading: false,
+    view: 'form',
+    url: ""}
+  })
