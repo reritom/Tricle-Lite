@@ -42,6 +42,23 @@ Vue.component('download-button', {
   }
 })
 
+Vue.component('start-button', {
+  template:`<div class="flex-container-row">
+            <div @click="$emit('starting')">
+              <svg version="1.1"
+                   baseProfile="full"
+                   width="300" height="500"
+                   xmlns="http://www.w3.org/2000/svg">
+
+                <rect rx="15" ry="15" width="100%" height="100%" fill="red" />
+                <circle cx="150" cy="100" r="80" fill="green" />
+                <text x="150" y="125" font-size="60" text-anchor="middle" fill="white">Start</text>
+
+              </svg>
+              </div>
+            </div>`
+})
+
 Vue.component('end-tab', {
   data: function () {
     return {
@@ -66,13 +83,14 @@ Vue.component('upload-handler', {
   },
   template: `<div>
               <div class="dropbox">
-                <input class="input-file" type="file" multiple :name="uploadFieldName" :disabled="isPosting" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"  accept="image/*">
+                <input class="input-file" type="file" multiple :name="uploadFieldName" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"  accept="image/*">
                 <p v-if="isInitial">
                   Drag your file(s) here to begin<br> or click to browse
                 </p>
               </div>
               <div v-for="file, index in ourFileList">
               <p> Filename is {{file.name}}, index is {{index}}</p>
+              </div>
             </div>`,
   methods: {
     filesChange: function(fieldName, fileList) {
@@ -121,6 +139,6 @@ new Vue({
   delimiters: ['[[',']]'],
   data: {
     loading: false,
-    view: 'form',
+    view: 'notstarted',
     url: ""}
   })

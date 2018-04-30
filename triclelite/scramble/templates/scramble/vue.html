@@ -99,6 +99,10 @@
           <form-tab></form-tab>
       </div>
 
+      <div id="NotStartedView"  v-if="view==='notstarted'">
+        <start-button v-on:starting="view='form'"></start-button>
+      </div>
+
       <div id="EndView"  v-if="view==='end'">
         <end-tab></end-tab>
       </div>
