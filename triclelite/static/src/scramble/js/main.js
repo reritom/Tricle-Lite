@@ -114,9 +114,9 @@ Vue.component('upload-handler', {
                 </p>
               </div>
               <button @click="removeAll()">Remove all selected files</button>
-              <div class="flex-container-row" v-for="file, index in ourFileList">
-              <div class="box" @click="removeOne(index)">
-                <p> {{file.name}} click to remove</p>
+              <div class="flex-container-row-ns">
+              <div class="box-preview" v-for="file, index in ourFileList" @click="removeOne(index)">
+              Deselect {{file.name}}
               </div>
               </div>
             </div>`,
