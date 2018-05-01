@@ -89,7 +89,6 @@ Vue.component('end-tab', {
     }
   },
   template: `<div>
-            <p>This is the end tab</p>
             <div class="flex-container-row">
               <download-button :url="url" :sessiontoken="sessiontoken"></download-button>
               <done-button :url="url" v-on:refreshpulse="$emit('refreshpulse')"></done-button>
@@ -101,13 +100,12 @@ Vue.component('upload-handler', {
   data: function () {
     return {
       uploadFieldName: "Photos",
-      ourFileList: [],
-      fileCount: 0
+      ourFileList: []
     }
   },
   template: `<div>
               <div class="dropbox">
-                <input class="input-file" type="file" multiple :name="uploadFieldName" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"  accept="image/*">
+                <input class="input-file" type="file" multiple :name="uploadFieldName" @change="filesChange($event.target.name, $event.target.files)"  accept="image/*">
                 <p v-if="isInitial">
                   Drag your file(s) here to begin<br> or click to browse
                 </p>
@@ -115,14 +113,63 @@ Vue.component('upload-handler', {
                   Add some more files if you want
                 </p>
               </div>
-              <div v-for="file, index in ourFileList">
-              <p> Filename is {{file.name}}, index is {{index}}</p>
+              <button @click="removeAll()">Remove all selected files</button>
+              <div class="flex-container-row" v-for="file, index in ourFileList">
+              <div class="box" @click="removeOne(index)">
+                <p> {{file.name}} click to remove</p>
+              </div>
               </div>
             </div>`,
   methods: {
     filesChange: function(fieldName, fileList) {
       // To handle new images being selected
-      this.ourFileList = fileList;
+      if (this.ourFileList.length === 0){
+        this.ourFileList = Array.prototype.slice.call(fileList);
+      }
+      else {
+        // We merge any of the unique files added
+        console.log(typeof(fileList));
+        console.log(fileList);
+        this.ourFileList = this.mergeObjects(this.ourFileList, fileList);
+      }
+    },
+    mergeObjects: function(first, second) {
+      // This method merges a list (first) with a filelist (second) to make a list with no duplicates
+      var third = [];
+
+      // Create a list for each
+      var first_list = Array.prototype.slice.call(first);
+      var second_list = Array.prototype.slice.call(second);
+
+      // Create a list with the existing file names
+      var existing_filenames = []
+      for (var i = 0; i < first_list.length; i++) {
+        existing_filenames.push(first_list[i].name);
+      }
+
+      console.log(first_list);
+      console.log(second_list);
+
+      // Merge the lists
+      var third = first_list.concat(second_list.filter(function (item) {
+          // For each of the new files name, if it is in the existing filename list, filter it.
+          // Then concat the existing file list, with the filtered new list
+          return existing_filenames.indexOf(item.name) < 0;
+      }));
+
+      return third
+    },
+    removeAll: function() {
+      // Remove all selected files
+      this.ourFileList = [];
+    },
+    removeOne: function(index) {
+      // Remove a single selected file based on its index
+      Vue.delete(this.ourFileList, index);
+    }
+  },
+  watch: {
+    ourFileList() {
       this.$emit('filesadded', this.ourFileList)
     }
   },
@@ -148,33 +195,44 @@ Vue.component('form-tab', {
     }
   },
   template: `<div>
-            <div v-if="loading">
+            <div v-show="loading">
               <p>We are loading</p>
             </div>
-            <div class="flex-container-column">
-              <div class="box"><input v-model="keyone"></div>
-              <div class="box"><input v-model="keytwo"></div>
-              <div class="box"><input v-model="keythree"></div>
-              <div class="box"><input v-model="zipcode"></div>
-              <div class="box">
-                  <!-- Viewable -->
-                  <input type="radio" id="scramble" value="Scramble" v-model="mode">
-                  <label for="scramble">Scramble</label>
-                  <input type="radio" id="unscramble" value="Unscramble" v-model="mode">
-                  <label for="unscramble">Unscramble</label>
-              </div>
-              </div>
-              <upload-handler v-on:filesadded="files = $event"></upload-handler>
+            <div v-show="!loading">
               <div class="flex-container-column">
-                <div class="box"><button @click="post()">I am a button</button></div>
-              </div>
+                <div class="box"><input v-model="keyone"></div>
+                <div class="box"><input v-model="keytwo"></div>
+                <div class="box"><input v-model="keythree"></div>
+                <div class="box"><input v-model="zipcode"></div>
+                <div class="box">
+                    <!-- Scramble radio boxes -->
+                    <input type="radio" id="scramble" value="Scramble" v-model="mode">
+                    <label for="scramble">Scramble</label>
+                    <input type="radio" id="unscramble" value="Unscramble" v-model="mode">
+                    <label for="unscramble">Unscramble</label>
+                </div>
+                <div class="box"><button v-show="formIsValid" @click="post()">I am a button</button></div>
+                </div>
+                <upload-handler v-on:filesadded="files = $event"></upload-handler>
+            </div>
             </div>`,
+  computed:{
+    formIsValid () {
+      if ((this.keyone.length < 3) || (this.keytwo.length < 3) || (this.keythree.length < 3) || (this.files.length === 0)) {
+        return false
+      }
+      else {
+        return true
+      }
+    }
+  },
   methods: {
-    validate: function() {
-      // Check that the keys are filled and that files have been selected
-    },
     post: function() {
       // Validate and post the form, emit the url
+      if (!this.formIsValid){
+        // This shouldn't happen, the button is only visible if the form is valid
+        return
+      }
       console.log("Posting the form");
       var formData = new FormData();
       this.createToken();
@@ -242,12 +300,32 @@ Vue.component('form-tab', {
   }
 })
 
+Vue.component('main-view', {
+  data: function () {
+    return {
+      view: 'notstarted',
+      sessiontoken: "",
+      url: ""
+    }
+  },
+  template: `<div>
+
+                <div id="FormView" v-if="view==='form'">
+                    <form-tab v-on:urlcreated="url = $event" v-on:sessioncreated="sessiontoken = $event" v-on:ready="view='end'"></form-tab>
+                </div>
+
+                <div id="NotStartedView"  v-if="view==='notstarted'">
+                  <start-button v-on:starting="view='form'"></start-button>
+                </div>
+
+              <div id="EndView"  v-if="view==='end'">
+                <end-tab :url="url" :sessiontoken="sessiontoken" v-on:refreshpulse="view='notstarted'"></end-tab>
+              </div>
+
+            </div>`
+})
+
 new Vue({
   el: '#VueContainer',
-  delimiters: ['[[',']]'],
-  data: {
-    loading: false,
-    view: 'notstarted',
-    sessiontoken: "",
-    url: ""}
+  delimiters: ['[[',']]']
   })
