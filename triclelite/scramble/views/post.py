@@ -1,4 +1,4 @@
-
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
 from scramble.tools import mediaTools, urlTools, commonTools
 from scramble.models import ActiveURL, ZipLock, KeyChain
@@ -9,6 +9,7 @@ from pathlib import Path
 from PIL import Image
 import os
 
+@csrf_exempt
 def post(request):
     '''
         This method accepts and stores the data for scrambling

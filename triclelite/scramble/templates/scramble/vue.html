@@ -96,7 +96,7 @@
       <button @click="view='form'">Make form</button>
         <button @click="view='end'">Make end</button>
       <div id="FormView" v-if="view==='form'">
-          <form-tab></form-tab>
+          <form-tab v-on:urlcreated="url = $event" v-on:sessioncreated="sessiontoken = $event" v-on:ready="view='end'"></form-tab>
       </div>
 
       <div id="NotStartedView"  v-if="view==='notstarted'">
@@ -104,7 +104,7 @@
       </div>
 
       <div id="EndView"  v-if="view==='end'">
-        <end-tab></end-tab>
+        <end-tab :url="url" :sessiontoken="sessiontoken" v-on:refreshpulse="view='notstarted'"></end-tab>
       </div>
 
       <div class="loading" v-if="loading===true">Loading&#8230;</div>
