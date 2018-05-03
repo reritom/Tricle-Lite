@@ -1,5 +1,5 @@
 from scramble.core.scrambler import ScrambleObject
-from scramble.tools import mediaTools, urlTools, commonTools
+from scramble.tools import media_tools, url_tools, common_tools
 from scramble.models import ActiveURL, ZipLock, KeyChain
 
 from datetime import datetime, timedelta
@@ -129,7 +129,7 @@ class ScramblerManager():
             print("Zipfile " + self.zipname)
             if prefile != self.zipname:
                 print("Deleting " + prefile)
-                mediaTools.delete_file(os.path.join(self.mediaPath, prefile))
+                media_tools.delete_file(os.path.join(self.mediaPath, prefile))
 
     def validatePathContents(self):
         '''
@@ -220,7 +220,7 @@ class ScramblerManager():
                     except Exception as e:
                         print("Error saving as BMP for " + self.url + " : " + e)
                         print("Unable to save, expiring " + self.url)
-                        urlTools.expire_url(url)
+                        url_tools.expire_url(url)
 
         self.addToZip(name)
 

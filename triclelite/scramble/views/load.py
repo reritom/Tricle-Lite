@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from scramble.tools import media_tools, url_tools, common_tools
 from scramble.core.manager import ScramblerManager
+from scramble.tools.validation.decorators import validate_url
 from scramble.models import ActiveURL, ExpiredURL, ZipLock, KeyChain
 from scramble.forms import ScrambleForm
 from django.conf import settings
@@ -12,6 +13,7 @@ from pathlib import Path
 
 import shutil, zipfile, os, pickle
 
+@validate_url
 def load(request, url):
     '''
         This method processes the files.

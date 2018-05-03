@@ -1,7 +1,7 @@
 import uuid, os
 from django.conf import settings
 from scramble.models import ActiveURL, ExpiredURL
-from scramble.tools import mediaTools
+from scramble.tools import media_tools
 
 def validate_url_request(url):
     '''
@@ -42,7 +42,7 @@ def expire_url(url):
         and creates an expired object
     '''
     url_obj = ActiveURL.objects.get(url=url)
-    mediaTools.delete_dir(url)
+    media_tools.delete_dir(url)
     expired_url, created = ExpiredURL.objects.get_or_create(url=url_obj.get_url())
     if created:
         expired_url.created = url_obj.created
