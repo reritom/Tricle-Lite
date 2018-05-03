@@ -49,12 +49,13 @@ Vue.component('download-button', {
       var status_url = "/api/status/" + this.url + "/";
       this.$http.get(status_url)
           .then((response) => {
-            if (true){
+            if (response.data.status && response.data.data.valid){
               console.log("Download status OK, trying to download");
               window.location = "/api/down/" + this.url + "/?token=" + this.sessiontoken;
             }
             else {
-              errorHandler("Download limit reached");
+              console.log("Download limit reached");
+              this.$emit('refreshpulse');
             };
           })
           .catch((err) => {
@@ -83,14 +84,9 @@ Vue.component('start-button', {
 
 Vue.component('end-tab', {
   props: ['url', 'sessiontoken'],
-  data: function () {
-    return {
-      message: ""
-    }
-  },
   template: `<div>
             <div class="flex-container-row">
-              <download-button :url="url" :sessiontoken="sessiontoken"></download-button>
+              <download-button :url="url" :sessiontoken="sessiontoken" v-on:refreshpulse="$emit('refreshpulse')"></download-button>
               <done-button :url="url" v-on:refreshpulse="$emit('refreshpulse')"></done-button>
             </div>
             </div>`
@@ -255,9 +251,10 @@ Vue.component('form-tab', {
 
       this.$http.post('/api/post', formData)
           .then((response) => {
+            console.log(response);
             if (response.data.status === true) {
               console.log(response);
-                this.url = response.data.url;
+                this.url = response.data.data.url;
                 this.triggerLoad();
             }
           })
@@ -282,6 +279,7 @@ Vue.component('form-tab', {
 
       this.$http.get(load_url)
           .then((response) => {
+            console.log(response);
             if (response.data.status === true) {
                 console.log("Load successful");
                 this.$emit('urlcreated', this.url);

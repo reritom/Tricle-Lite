@@ -18,6 +18,16 @@ def validate_url_in_db(url):
     '''
     return ActiveURL.objects.filter(url=url).exists()
 
+def validate_url_not_expired(url):
+    '''
+        This function returns true if the url is in the db and isnt expired
+        :returns: Bool
+    '''
+    if validate_url_in_db(url) and not ActiveURL.objects.get(url=url).get_expired():
+        return True
+    else:
+        return False
+
 
 def url_in_media(url):
     '''

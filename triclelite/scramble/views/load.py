@@ -1,5 +1,5 @@
-from django.http import JsonResponse
 from scramble.tools import media_tools, url_tools, common_tools
+from scramble.tools.response_tools import response_ko, response_ok
 from scramble.core.manager import ScramblerManager
 from scramble.tools.validation.decorators import validate_url
 from scramble.models import ActiveURL, ExpiredURL, ZipLock, KeyChain
@@ -20,17 +20,10 @@ def load(request, url):
         This gets AJAX-ed straight after the post
     '''
 
-    if not url_tools.validate_url_request(url):
-        return JsonResponse({"status":False, "message":"Invalid url"})
-
     urlobj = ActiveURL.objects.get(url=url)
 
-    if urlobj.is_expired():
-        #url has expired, mark as expired, delete dirs, redirect to homepage
-        url_tools.expire_url(url)
-
     if urlobj.is_processed():
-        return JsonResponse({"status":False, "message":"Already loaded"})
+        return response_ko("Already loaded")
 
     media_path = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
 
@@ -39,4 +32,4 @@ def load(request, url):
     with ScramblerManager(media_path, url) as manager:
         manager.run()
 
-    return JsonResponse({"status":True, "url":url})
+    return response_ok({"url":url})

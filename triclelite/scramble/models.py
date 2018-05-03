@@ -19,11 +19,14 @@ class ActiveURL(models.Model):
     def __str__(self):
         return self.url
 
-    def get_status(self):
+    def get_expired(self):
         return self.expired
 
     def validate(self):
         return self.expired
+
+    def get_remaining_downloads(self):
+        return settings.DOWNLOAD_LIMIT - self.down_count
 
     def getToken(self):
         return self.sessionToken
@@ -87,6 +90,15 @@ class ActiveURL(models.Model):
         self.number_of_files +=1
         self.save()
         return
+
+    def get_status(self):
+        status = {'processed':self.is_processed(),
+                  'downloadable':self.is_downloadable(),
+                  'expires_at':self.get_expiration(),
+                  'downloads_remaining':self.get_remaining_downloads(),
+                  'valid':self.is_processed() and self.is_downloadable()}
+
+        return status
 
 class ExpiredURL(models.Model):
     url = models.CharField(default=0, max_length=255, unique=True)

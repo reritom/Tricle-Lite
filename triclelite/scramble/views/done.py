@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from scramble.tools import media_tools, url_tools
+from scramble.tools.response_tools import response_ko, response_ok
 
 def done(request, url):
     '''
@@ -12,6 +13,6 @@ def done(request, url):
         if url_tools.url_in_media(url):
             media_tools.delete_dir(url)
 
-        return JsonResponse({"status":True})
+        return response_ok({'removed':True})
     else:
-        return JsonResponse({"status":False, "message":"Invalid url"})
+        return response_ok({"Invalid url"})

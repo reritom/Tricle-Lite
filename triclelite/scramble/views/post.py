@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
+from scramble.tools.response_tools import response_ko, response_ok
 from scramble.tools import media_tools, url_tools, common_tools
 from scramble.models import ActiveURL, ZipLock, KeyChain
 from scramble.forms import ScrambleForm
@@ -20,20 +21,20 @@ def post(request):
 
     form = ScrambleForm(request.POST, request.FILES)
     if not form.is_valid():
-        return JsonResponse({"status":False, "message":"Invalid form data"})
+        return response_ko({"Invalid form data"})
 
     form = form.cleaned_data
     formdat = {'mode' : form['mode'], 'k1' : form['key_one'], 'k2' : form['key_two'], 'k3' : form['key_three']}
 
     if formdat['mode'] not in ['Scramble', 'Unscramble']:
-        return JsonResponse({"status":False, 'message':'Invalid mode'})
+        return response_ko({'Invalid mode'})
 
     for key in ['k1', 'k2', 'k3']:
         if len(formdat[key]) < 3:
-            return JsonResponse({"status":False, 'message':'Key too short'})
+            return response_ko({'Key too short'})
 
     if not len(request.FILES.getlist('images')) > 0:
-        return JsonResponse({"status":False, "message":"No images submitted"})
+        return response_ko({"No images submitted"})
 
     # Create an ActiveURL
     urlobj = ActiveURL.objects.create()
@@ -65,4 +66,4 @@ def post(request):
             urlobj.increment_count()
 
     # return success to initate the load
-    return JsonResponse({"status":True, "url":this_url})
+    return response_ok({"url":this_url})
