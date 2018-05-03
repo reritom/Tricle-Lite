@@ -1,6 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
-from scramble.tools import mediaTools, urlTools, commonTools
+from scramble.tools import media_tools, url_tools, common_tools
 from scramble.models import ActiveURL
 from django.conf import settings
 
@@ -15,7 +15,7 @@ def download(request, url):
         This method retrieves the zipped download file
     '''
     print("In download")
-    if not urlTools.validate_url_request(url):
+    if not url_tools.validate_url_request(url):
         return JsonResponse({"status":False})
 
     urlobj = ActiveURL.objects.get(url=url)
@@ -32,18 +32,18 @@ def download(request, url):
     # Valiate download-ability
     if not urlobj.is_downloadable():
         #to limit number of download attempts, for security
-        urlTools.expire_url(url)
+        url_tools.expire_url(url)
         return JsonResponse({"status":False, "message":'limit reached'})
     else:
         urlobj.inc_down_count()
 
     if urlobj.is_expired():
         #url has expired, mark as expired, delete dirs, redirect to homepage
-        urlTools.expire_url(url)
+        url_tools.expire_url(url)
         return JsonResponse({"status":False, "message":'url expired'})
 
-    if not urlTools.url_in_media(url):
-        urlTools.expire_url(url)
+    if not url_tools.url_in_media(url):
+        url_tools.expire_url(url)
         return JsonResponse({"status":False, "message":'url not found'})
 
     if not urlobj.is_processed():

@@ -1,6 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
-from scramble.tools import mediaTools, urlTools, commonTools
+from scramble.tools import media_tools, url_tools, common_tools
 from scramble.models import ActiveURL, ZipLock, KeyChain
 from scramble.forms import ScrambleForm
 
@@ -16,7 +16,7 @@ def post(request):
     '''
     #validate_keys()
     #valifate_files()
-    commonTools.show_request(request)
+    common_tools.show_request(request)
 
     form = ScrambleForm(request.POST, request.FILES)
     if not form.is_valid():
@@ -55,7 +55,7 @@ def post(request):
     keyobj.save()
 
     # Create the dir for storing the files
-    media_path = mediaTools.make_dir(this_url)
+    media_path = media_tools.make_dir(this_url)
 
     # Store the files
     for f in request.FILES.getlist('images'):

@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from scramble.tools import mediaTools, urlTools, commonTools
+from scramble.tools import media_tools, url_tools, common_tools
 from scramble.models import ActiveURL, ExpiredURL, ZipLock, KeyChain
 from django.conf import settings
 from django.utils import timezone
@@ -22,7 +22,7 @@ def status(request, url):
               'downloads_remaining':'?',
               'valid':'?'}
 
-    if not urlTools.validate_url_request(url):
+    if not url_tools.validate_url_request(url):
         status['valid'] = False
         return JsonResponse(status)
 
@@ -30,7 +30,7 @@ def status(request, url):
 
     if urlobj.is_expired():
         #url has expired, mark as expired, delete dirs, redirect to homepage
-        urlTools.expire_url(url)
+        url_tools.expire_url(url)
         status['valid'] = False
         return JsonResponse(status)
     else:
@@ -50,6 +50,6 @@ def status(request, url):
         status['downloadable'] = False
 
     if urlobj.down_count == settings.DOWNLOAD_LIMIT:
-        urlTools.expire_url(url)
+        url_tools.expire_url(url)
 
     return JsonResponse(status)
