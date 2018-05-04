@@ -2,8 +2,12 @@
     This module contains tools for dealing with the Media directory
 '''
 import os, shutil
-from scramble.models import ActiveURL, ExpiredURL
+from scramble.models.active_url import ActiveURL
+from scramble.models.expired_url import ExpiredURL
 from django.conf import settings
+
+def get_media_path(url):
+    return os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
 
 def delete_dir(url):
     '''
@@ -30,7 +34,7 @@ def make_dir(url):
         os.mkdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url))
 
     media_path = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
-    
+
     return media_path
 
 def delete_file(name):

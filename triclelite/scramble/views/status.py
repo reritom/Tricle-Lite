@@ -1,6 +1,6 @@
 from scramble.tools.validation.decorators import validate_url
 from scramble.tools.response_tools import response_ko, response_ok
-from scramble.models import ActiveURL
+from scramble.models.active_url import ActiveURL
 
 
 @validate_url

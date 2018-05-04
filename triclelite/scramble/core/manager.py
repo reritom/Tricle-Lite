@@ -1,6 +1,8 @@
 from scramble.core.scrambler import ScrambleObject
 from scramble.tools import media_tools, url_tools, common_tools
-from scramble.models import ActiveURL, ZipLock, KeyChain
+from scramble.models.active_url import ActiveURL
+from scramble.models.zip_lock import ZipLock
+from scramble.models.key_chain import KeyChain
 
 from datetime import datetime, timedelta
 from hashlib import sha1
@@ -227,7 +229,6 @@ class ScramblerManager():
     def scrambleFile(self, image):
         '''
             This method receives a file and scrambles it
-            https://stackoverflow.com/questions/865115/how-do-i-correctly-clean-up-a-python-object
         '''
         print("In scrambleFile")
         with ScrambleObject() as instance:

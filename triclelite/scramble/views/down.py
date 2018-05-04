@@ -3,11 +3,10 @@ from django.http import HttpResponse
 from scramble.tools.validation.decorators import validate_url
 from scramble.tools.response_tools import response_ko, response_ok
 from scramble.tools import media_tools, url_tools, common_tools
-from scramble.models import ActiveURL
+from scramble.models.active_url import ActiveURL
 from django.conf import settings
 
 from datetime import datetime
-from pathlib import Path
 
 import os
 

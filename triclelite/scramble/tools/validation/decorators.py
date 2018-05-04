@@ -16,15 +16,4 @@ def validate_url(view):
             return response_ko("URL has expired")
 
         return view(request, url)
-
-    print("Inner is {0}".format(inner))
-
     return inner
-'''
-def generate_response(view):
-    print("In generate response for view {0}".format(view.__name__))
-    @wraps(view)
-    def inner(request, url):
-        return view(request, url)
-    return inner
-'''

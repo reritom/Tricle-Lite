@@ -2,7 +2,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
 from scramble.tools.response_tools import response_ko, response_ok
 from scramble.tools import media_tools, url_tools, common_tools
-from scramble.models import ActiveURL, ZipLock, KeyChain
+from scramble.models.active_url import ActiveURL
+from scramble.models.zip_lock import ZipLock
+from scramble.models.key_chain import KeyChain
 from scramble.forms import ScrambleForm
 
 from datetime import datetime

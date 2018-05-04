@@ -1,5 +1,8 @@
 from django.contrib import admin
-from scramble.models import ActiveURL, ExpiredURL, ZipLock, KeyChain
+from scramble.models.active_url import ActiveURL
+from scramble.models.expired_url import ExpiredURL
+from scramble.models.zip_lock import ZipLock
+from scramble.models.key_chain import KeyChain
 
 # Register your models here.
 

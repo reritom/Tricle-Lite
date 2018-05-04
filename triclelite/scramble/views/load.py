@@ -1,17 +1,9 @@
-from scramble.tools import media_tools, url_tools, common_tools
+from scramble.tools import media_tools
 from scramble.tools.response_tools import response_ko, response_ok
 from scramble.core.manager import ScramblerManager
 from scramble.tools.validation.decorators import validate_url
-from scramble.models import ActiveURL, ExpiredURL, ZipLock, KeyChain
-from scramble.forms import ScrambleForm
-from django.conf import settings
-from django.utils import timezone
-
-from datetime import datetime, timedelta
-from hashlib import sha1
-from pathlib import Path
-
-import shutil, zipfile, os, pickle
+from scramble.models.active_url import ActiveURL
+import os
 
 @validate_url
 def load(request, url):
@@ -25,7 +17,7 @@ def load(request, url):
     if urlobj.is_processed():
         return response_ko("Already loaded")
 
-    media_path = os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
+    media_path = media_tools.get_media_path(url)
 
     #process files
     print("At Manager")

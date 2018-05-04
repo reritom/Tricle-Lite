@@ -1,6 +1,7 @@
 import uuid, os
 from django.conf import settings
-from scramble.models import ActiveURL, ExpiredURL
+from scramble.models.active_url import ActiveURL
+from scramble.models.expired_url import ExpiredURL
 from scramble.tools import media_tools
 
 def validate_url_request(url):
