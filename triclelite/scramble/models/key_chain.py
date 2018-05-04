@@ -14,7 +14,7 @@ class KeyChain(models.Model):
     def __str__(self):
         return self.active.url + "_KC"
 
-    def setKeys(self, keys):
+    def set_keys(self, keys):
         '''
             This method sets the keys, expected in a list format
         '''
@@ -24,5 +24,5 @@ class KeyChain(models.Model):
         self.key_three = keys[2]
         self.save()
 
-    def getKeys(self):
+    def get_keys(self):
         return [self.key_one, self.key_two, self.key_three]

@@ -1,4 +1,0 @@
-# Seperate and refacture the models
-# Move core to helpers
-# Make the cleanup and hard
-# Make separate app for FE

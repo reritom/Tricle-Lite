@@ -12,12 +12,12 @@ class ZipLock(models.Model):
     def __str__(self):
         return self.active.url + "_ZL"
 
-    def setZipcode(self, code):
+    def set_zipcode(self, code):
         '''
             Expected a code in string format
         '''
         print("setting zipcode to " + code)
         self.zipcode = code
 
-    def getZipcode(self):
+    def get_zipcode(self):
         return self.zipcode

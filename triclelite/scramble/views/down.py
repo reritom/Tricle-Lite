@@ -25,7 +25,7 @@ def download(request, url):
     if token is False:
         return response_ko({"Missing token"})
 
-    if not urlobj.validateToken(token):
+    if not urlobj.validate_token(token):
         return response_ko({"Invalid token"})
 
     # Valiate download-ability

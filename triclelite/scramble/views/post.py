@@ -43,18 +43,18 @@ def post(request):
     this_url = urlobj.get_url()
     if formdat['mode'] == 'Unscramble':
         urlobj.mode = 'Unscramble'
-    urlobj.setToken(form['retrieve_token'])
+    urlobj.set_token(form['retrieve_token'])
     urlobj.save()
 
     # Create ZipCode object
     if form.get('zipcode', False):
         zipobj = ZipLock.objects.create(active=urlobj)
-        zipobj.setZipcode(form['zipcode'])
+        zipobj.set_zipcode(form['zipcode'])
         zipobj.save()
 
     # Create KeyChain object
     keyobj = KeyChain.objects.create(active=urlobj)
-    keyobj.setKeys([formdat['k1'], formdat['k2'], formdat['k3']])
+    keyobj.set_keys([formdat['k1'], formdat['k2'], formdat['k3']])
     keyobj.save()
 
     # Create the dir for storing the files

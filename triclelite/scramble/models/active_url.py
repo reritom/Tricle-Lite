@@ -30,15 +30,15 @@ class ActiveURL(models.Model):
     def get_remaining_downloads(self):
         return settings.DOWNLOAD_LIMIT - self.down_count
 
-    def getToken(self):
+    def get_token(self):
         return self.sessionToken
 
-    def validateToken(self, token):
+    def validate_token(self, token):
         print("SessionToken: " + self.sessionToken)
         print("ProvidedToken: " + token)
         return self.sessionToken == token
 
-    def setToken(self, token):
+    def set_token(self, token):
         self.sessionToken = token
         self.save()
         return
