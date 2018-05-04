@@ -23,6 +23,6 @@ def validate_url(view):
 def superuser_only(function):
     def inner(request, *args, **kwargs):
         if not request.user.is_superuser:
-            raise PermissionDenied
+            return response_ko("Invalid permissions")
         return function(request, *args, **kwargs)
     return inner
