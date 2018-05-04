@@ -53,7 +53,6 @@ def expire_url(url):
         and creates an expired object
     '''
     url_obj = ActiveURL.objects.get(url=url)
-    media_tools.delete_dir(url)
     expired_url, created = ExpiredURL.objects.get_or_create(url=url_obj.get_url())
     if created:
         expired_url.created = url_obj.created
@@ -61,3 +60,5 @@ def expire_url(url):
         expired_url.mode = url_obj.mode
         expired_url.save()
     url_obj.delete()
+
+    media_tools.delete_dir(url)

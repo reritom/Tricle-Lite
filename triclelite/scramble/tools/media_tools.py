@@ -9,6 +9,13 @@ from django.conf import settings
 def get_media_path(url):
     return os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)
 
+def get_base_media_path():
+    return os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp')
+
+def delete_temp():
+    media = get_base_media_path()
+    shutil.rmtree(media)
+
 def delete_dir(url):
     '''
         This method checks if the url dir is present
