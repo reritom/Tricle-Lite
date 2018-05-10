@@ -3,12 +3,15 @@ from scramble.tools import media_tools, url_tools, common_tools
 from scramble.models.active_url import ActiveURL
 from scramble.models.zip_lock import ZipLock
 from scramble.models.key_chain import KeyChain
+from scramble.models.url_item import UrlItem
 
 from datetime import datetime, timedelta
 from hashlib import sha1
 from pathlib import Path
 import shutil, zipfile, os, pickle
 from PIL import Image
+
+from scramble.tools import media_tools
 
 class ScramblerManager():
     '''
@@ -19,10 +22,10 @@ class ScramblerManager():
         print("Entering manager object")
         return self
 
-    def __init__(self, media_path, url):
+    def __init__(self, url):
         print("Manager init")
         self.keys = list()
-        self.media_path = media_path
+        self.media_path = media_tools.get_media_path(url)
         self.url = url
 
         self.zipname = None
@@ -81,7 +84,6 @@ class ScramblerManager():
         '''
         print("In Run")
 
-        if not self.validate_path_contents(): return False
         if not self.set_keys_from_key_chain(): return False
         print("Passed validation")
         self.generate_zip()
@@ -122,7 +124,7 @@ class ScramblerManager():
 
     def delete_preprocessed(self):
         '''
-            Delete the original images and the data pkl
+            Delete the original images
         '''
         print("In Delete")
         print(os.listdir(self.media_path))
@@ -132,13 +134,6 @@ class ScramblerManager():
             if prefile != self.zipname:
                 print("Deleting " + prefile)
                 media_tools.delete_file(os.path.join(self.media_path, prefile))
-
-    def validate_path_contents(self):
-        '''
-            This method validates that there is a pickled dict with 3 keys and a mode,
-            and that there are files to process
-        '''
-        return True
 
     def set_keys_from_key_chain(self):
         '''

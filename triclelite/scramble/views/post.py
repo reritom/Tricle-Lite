@@ -5,6 +5,7 @@ from scramble.tools import media_tools, url_tools, common_tools
 from scramble.models.active_url import ActiveURL
 from scramble.models.zip_lock import ZipLock
 from scramble.models.key_chain import KeyChain
+from scramble.models.url_item import UrlItem
 from scramble.forms import ScrambleForm
 
 from datetime import datetime
@@ -17,8 +18,6 @@ def post(request):
     '''
         This method accepts and stores the data for scrambling
     '''
-    #validate_keys()
-    #valifate_files()
     common_tools.show_request(request)
 
     form = ScrambleForm(request.POST, request.FILES)
@@ -60,11 +59,23 @@ def post(request):
     # Create the dir for storing the files
     media_path = media_tools.make_dir(this_url)
 
-    # Store the files
+    # Store the files and create a URL item for each
     for f in request.FILES.getlist('images'):
         if f.name.lower().endswith(('.jpg', '.bmp', '.png', '.jpeg')):
+
+            file_name, file_type = os.path.splitext(f.name.lower())
+            file_path = os.path.join(media_path, f.name)
+
             image = Image.open(f)
-            image.save(os.path.join(media_path, f.name), subsampling=0, quality=100)
+            image.save(file_path, subsampling=0, quality=100)
+
+            file_size = os.path.getsize(file_path)
+
+            # Create the UrlItem
+            url_item = UrlItem.objects.create(active=urlobj,
+                                              file_name=file_name,
+                                              file_type=file_type,
+                                              file_size=file_size)
             urlobj.increment_count()
 
     # return success to initate the load
