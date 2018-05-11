@@ -1,5 +1,5 @@
 from scramble.tools.response_tools import response_ko, response_ok
-from scramble.core.manager import ScramblerManager
+from scramble.helpers.scrambler.manager import ScramblerManager
 from scramble.tools.validation.decorators import validate_url
 from scramble.models.active_url import ActiveURL
 

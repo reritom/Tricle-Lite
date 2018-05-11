@@ -1,3 +1,0 @@
-frosted = https://medium.com/@AmJustSam/how-to-do-css-only-frosted-glass-effect-e2666bafab91
-discord = https://discordapp.com/login?redirect_to=%2F
-modal over certain div = https://webkul.com/blog/how-to-display-a-bootstrap-modal-inside-a-div/

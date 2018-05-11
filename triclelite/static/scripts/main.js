@@ -1,6 +1,0 @@
-//Validate
-$(document).ready(function() {
-
-
-
-});
