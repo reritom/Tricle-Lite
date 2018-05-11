@@ -6,6 +6,7 @@ from scramble.views.post import post
 from scramble.views.down import download
 from scramble.views.status import status
 from scramble.views.hard import hard
+from scramble.views.eta import eta
 
 app_name = 'scrambler'
 
@@ -17,4 +18,5 @@ urlpatterns = [
     url(r'done/(?P<url>\w+)/', done, name='done'),
     url(r'iaw/', cleanup, name='cleanup'),
     url(r'hard/', hard, name='hard'),
+    url(r'eta/', eta, name='eta'),
 ]
