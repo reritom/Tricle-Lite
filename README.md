@@ -29,16 +29,18 @@ To use the application, an account is no longer needed. Which means the API was 
 | `4` | Password for zipfile if phase isnt local | <ul><li>- [x] </li></ul> | <ul><li>- [ ] </li></ul> |
 | `5` | Link to GitHub in dropdown | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 | `6` | Delete files once processed | <ul><li>- [ ] </li></ul> | <ul><li>- [x] </li></ul> |
-| `7` | Create /iaw (cleanup) view | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
-| `8` | Create /hard (delete and expire everything) view | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
+| `7` | Create /iaw (cleanup) view | <ul><li>- [x] </li></ul> | <ul><li>- [ ] </li></ul> |
+| `8` | Create /hard (delete and expire everything) view | <ul><li>- [ ] </li></ul> | <ul><li>- [x] </li></ul> |
 | `9` | Create `pre` and `post` dirs to store files in | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 | `10` | Add v2 seedgen using hashlib and mixed keys | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
 | `11` | Move form post to separate endpoint | <ul><li>- [ ] </li></ul> | <ul><li>- [x] </li></ul> |
 | `12` | Use the zip token to validate the /down request, make it a POST | <ul><li>- [ ] </li></ul> | <ul><li>- [x] </li></ul> |
 | `13` | Encrypt the `pre` and `post` directories | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
-| `14` | Rewrite front end with VueJS | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
-| `15` | Clearly split FE and BE | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
+| `14` | Rewrite front end with VueJS | <ul><li>- [x] </li></ul> | <ul><li>- [ ] </li></ul> |
+| `15` | Clearly split FE and BE | <ul><li>- [ ] </li></ul> | <ul><li>- [x] </li></ul> |
 | `16` | Document API | <ul><li>- [ ] </li></ul> | <ul><li>- [ ] </li></ul> |
+
+Additionally, an endpoint needs to be added which returns the estimated processing time for a url if unprocessed, or the actual processing time if processed. This will require a new model with a one to one look to a url, called a LoadMonitor which will track the time taken and be linked to LoadItem's which contain the file size, and type. 
 
 ## Bugs
 - Status check before downloading seems to not be working
