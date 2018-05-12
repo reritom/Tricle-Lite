@@ -25,19 +25,6 @@ def validate_url(view):
         return view(request, url)
     return inner
 
-def validate_url_anywhere(view):
-    '''
-        Validate that the Url exists and is active
-    '''
-    @wraps(view)
-    def inner(request, url):
-        print("In inner validator")
-        # Validate that the URL exists as either an active or expired url
-        if not (url_tools.validate_url_request(url) or url_tools.validate_url_in_expired(url)):
-            return response_ko("Invalid URL")
-
-        return view(request, url)
-    return inner
 
 def superuser_only(function):
     def inner(request, *args, **kwargs):

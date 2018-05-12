@@ -36,12 +36,12 @@ class UrlItem(models.Model):
     def get_file_path(self):
         return self.file_path
 
-    @classmethod
-    def create_url_item_uuid(cls):
+    @staticmethod
+    def create_url_item_uuid():
         this_uuid = str(uuid.uuid4()).replace('-','')
 
         if UrlItem.objects.filter(id=this_uuid).exists():
-            return create_url_item_uuid()
+            return UrlItem.create_url_item_uuid()
         else:
             return this_uuid
 

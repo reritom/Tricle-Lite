@@ -19,12 +19,12 @@ class ImageDataStore(models.Model):
     def __str__(self):
         return self.related_url + "_" + self.file_name
 
-    @classmethod
-    def generate_id(cls):
+    @staticmethod
+    def generate_id():
         this_id = str(uuid.uuid4()).replace('-','')
 
         if ImageDataStore.objects.filter(id=this_id).exists():
-            return generate_id()
+            return ImageDataStore.generate_id()
         else:
             return this_id
 

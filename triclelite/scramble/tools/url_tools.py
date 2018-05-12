@@ -68,14 +68,10 @@ def expire_url(url):
         expired_url.number_of_files = url_obj.number_of_files
         expired_url.mode = url_obj.mode
         expired_url.duration = url_obj.get_duration().seconds
-        print("Duration is {0}".format(url_obj.get_duration()))
         expired_url.save()
 
         # Transfer the url items to image data stores
         for url_item in UrlItem.objects.filter(active=url_obj):
-            print("Process time was {0}".format(url_item.get_process_duration()))
-            print("in seconds {0}".format(url_item.get_process_duration().seconds))
-
             image_data_store = ImageDataStore.objects.create(file_type=url_item.get_file_type(),
                                                              file_size=url_item.get_file_size(),
                                                              file_name=url_item.get_file_name(),

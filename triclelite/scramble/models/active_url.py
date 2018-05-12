@@ -84,12 +84,12 @@ class ActiveURL(models.Model):
 
         self.save()
 
-    @classmethod
-    def generate_url(cls):
+    @staticmethod
+    def generate_url():
         new_url = str(uuid.uuid4()).replace('-','')
 
         if ActiveURL.objects.filter(url=new_url).exists() or ExpiredURL.objects.filter(url=new_url).exists():
-            return cls.generate_url()
+            return ActiveURL.generate_url()
         else:
             return new_url
 
