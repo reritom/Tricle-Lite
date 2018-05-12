@@ -77,7 +77,8 @@ def post(request):
                                               active=urlobj,
                                               file_name=file_name,
                                               file_type=file_type,
-                                              file_size=file_size)
+                                              file_size=file_size,
+                                              file_path=file_path)
             urlobj.increment_count()
 
     # return success to initate the load

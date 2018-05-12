@@ -20,6 +20,7 @@ class UrlItem(models.Model):
     file_name = models.CharField(default=0, max_length=255)
     file_type = models.CharField(default=0, max_length=255)
     file_size = models.IntegerField(default=0)
+    file_path = models.CharField(default=0, max_length=255)
 
     processed = models.BooleanField(default=False)
     process_start = models.DateTimeField(default=timezone.now, null=True)
@@ -27,6 +28,13 @@ class UrlItem(models.Model):
 
     def __str__(self):
         return self.active.url + "_" + self.file_name
+
+    def set_file_path(self, file_path):
+        self.file_path = file_path
+        self.save()
+
+    def get_file_path(self):
+        return self.file_path
 
     @classmethod
     def create_url_item_uuid(cls):
