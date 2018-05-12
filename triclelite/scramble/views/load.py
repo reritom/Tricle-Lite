@@ -17,7 +17,9 @@ def load(request, url):
 
     #process files
     print("At Manager")
+    url_obj.set_start()
     with ScramblerManager(url) as manager:
         manager.run()
+    url_obj.set_end()
 
     return response_ok({"url":url})

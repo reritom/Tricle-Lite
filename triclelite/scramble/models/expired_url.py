@@ -7,6 +7,7 @@ class ExpiredURL(models.Model):
     created = models.DateTimeField(default=timezone.now, null=True)
     number_of_files = models.IntegerField(default=0)
     mode = models.CharField(default="Scramble", max_length=255)
+    duration = models.DateTimeField(default=timezone.now, null=True)
 
     def __str__(self):
         return self.url

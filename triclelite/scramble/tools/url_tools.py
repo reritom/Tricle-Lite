@@ -19,6 +19,13 @@ def validate_url_in_db(url):
     '''
     return ActiveURL.objects.filter(url=url).exists()
 
+def validate_url_in_expired(url):
+    '''
+        This function returns true if the url is in the db
+        :returns: Bool
+    '''
+    return ExpiredURL.objects.filter(url=url).exists()
+
 def validate_url_not_expired(url):
     '''
         This function returns true if the url is in the db and isnt expired
@@ -58,6 +65,8 @@ def expire_url(url):
         expired_url.created = url_obj.created
         expired_url.number_of_files = url_obj.number_of_files
         expired_url.mode = url_obj.mode
+        expired_url.duration = url_obj.get_duration()
+        print("Duration is {0}".format(url_obj.get_duration()))
         expired_url.save()
     url_obj.delete()
 

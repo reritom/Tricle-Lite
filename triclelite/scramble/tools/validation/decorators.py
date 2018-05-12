@@ -5,6 +5,9 @@ from scramble.tools import media_tools, url_tools, common_tools
 from scramble.tools.response_tools import response_ko, response_ok
 
 def validate_url(view):
+    '''
+        Validate that the Url exists and is active
+    '''
     @wraps(view)
     def inner(request, url):
         print("In inner validator")
@@ -16,6 +19,20 @@ def validate_url(view):
         if not url_tools.validate_url_not_expired(url):
             url_tools.expire_url(url)
             return response_ko("URL has expired")
+
+        return view(request, url)
+    return inner
+
+def validate_url_anywhere(view):
+    '''
+        Validate that the Url exists and is active
+    '''
+    @wraps(view)
+    def inner(request, url):
+        print("In inner validator")
+        # Validate that the URL exists as either an active or expired url
+        if not (url_tools.validate_url_request(url) or url_tools.validate_url_in_expired(url)):
+            return response_ko("Invalid URL")
 
         return view(request, url)
     return inner
