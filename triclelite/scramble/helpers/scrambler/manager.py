@@ -92,19 +92,17 @@ class ScramblerManager():
         for url_item in UrlItem.objects.filter(active=self.urlobj):
             this_path = url_item.get_file_path()
 
-        #for f in os.listdir(self.media_path):
-        #    if f.lower().endswith(('bmp', 'jpg', 'png', 'jpeg')):
             image = Image.open(this_path)
 
             url_item.set_process_start()
             if self.mode == 'Scramble':
-                processedImage = self.scramble_file(image)
+                processed_image = self.scramble_file(image)
             elif self.mode == 'Unscramble':
-                processedImage = self.unscramble_file(image)
+                processed_image = self.unscramble_file(image)
             url_item.set_process_end()
             url_item.set_processed()
 
-            self.save_file(url_item.get_file_name(), processedImage)
+            self.save_file(url_item.get_file_name(), url_item.get_file_type(), processed_image)
 
         self.delete_preprocessed()
 
@@ -116,31 +114,14 @@ class ScramblerManager():
         # Mark as processed
         self.urlobj.set_processed()
 
-    def protect_zip(self):
-        '''
-            This method adds the password to the Zip
-        '''
-        print("In protect_zip")
-        if self.zipcode is not None:
-            print("Protecting file")
-            zf = zipfile.ZipFile(self.zipadr)
-            zf.setpassword(self.zipcode.encode('utf-8'))
-            zf.close()
-        else:
-            print("Not protecting file")
-
     def delete_preprocessed(self):
         '''
             Delete the original images
         '''
         print("In Delete")
-        print(os.listdir(self.media_path))
-        for prefile in os.listdir(self.media_path):
-            print("Prefile " + prefile)
-            print("Zipfile " + self.zipname)
-            if prefile != self.zipname:
-                print("Deleting " + prefile)
-                media_tools.delete_file(os.path.join(self.media_path, prefile))
+
+        for url_item in UrlItem.objects.filter(active=self.urlobj):
+            media_tools.delete_file(url_item.get_file_path())
 
     def set_keys_from_key_chain(self):
         '''
@@ -183,33 +164,28 @@ class ScramblerManager():
             zf = zipfile.ZipFile(self.zipadr, mode='w')
 
 
-    def save_file(self, filename, final):
+    def save_file(self, filename, filetype, final):
         '''
             This method adds a processed file to the zipfile
         '''
         print("Saving file")
         if self.mode == "Scramble":
-            name = str(Path(filename).with_suffix('')) + ".BMP"
+            name = filename + ".BMP"
             print("Saving as " + os.path.join(self.media_path, name))
             final.save(os.path.join(self.media_path, name))
         else:
-            try:
-                name = str(Path(filename).with_suffix('')) + ".JPG"
+            if filetype == 'jpg':
+                name = filename + ".JPG"
                 final.save(os.path.join(self.media_path, name), format="JPEG", subsampling=0, quality=100)
-            except Exception as e:
-                print("Error saving as JPG for " + self.url + " : " + e)
-                try:
-                    name = str(Path(filename).with_suffix('')) + ".PNG"
-                    final.save(os.path.join(self.media_path, name), format="PNG", subsampling=0, quality=100)
-                except Exception as e:
-                    print("Error saving as PNG for " + self.url + " : " + e)
-                    try:
-                        name = str(Path(filename).with_suffix('')) + ".BMP"
-                        final.save(os.path.join(self.media_path, name))
-                    except Exception as e:
-                        print("Error saving as BMP for " + self.url + " : " + e)
-                        print("Unable to save, expiring " + self.url)
-                        url_tools.expire_url(url)
+            elif filetype == 'png':
+                name = filename + ".PNG"
+                final.save(os.path.join(self.media_path, name), format="PNG", subsampling=0, quality=100)
+            elif filetype == 'bmp':
+                name = filename + ".BMP"
+                final.save(os.path.join(self.media_path, name))
+            else:
+                print("Unable to find correct filetype for {0}".format(filetype))
+                url_tools.expire_url(url)
 
         self.add_file_to_zip(name)
 

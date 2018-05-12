@@ -76,7 +76,7 @@ def post(request):
             url_item = UrlItem.objects.create(id=UrlItem.create_url_item_uuid(),
                                               active=urlobj,
                                               file_name=file_name,
-                                              file_type=file_type,
+                                              file_type=file_type[1:],
                                               file_size=file_size,
                                               file_path=file_path)
             urlobj.increment_count()
