@@ -25,11 +25,11 @@ class ActiveURL(models.Model):
         return self.url
 
     def set_start(self):
-        self.start = timezone.now
+        self.start = timezone.now()
         self.save()
 
     def set_end(self):
-        self.end = timezone.now
+        self.end = timezone.now()
         self.save()
 
     def get_duration(self):
@@ -48,17 +48,14 @@ class ActiveURL(models.Model):
         return self.sessionToken
 
     def validate_token(self, token):
-        print("SessionToken: " + self.sessionToken)
-        print("ProvidedToken: " + token)
         return self.sessionToken == token
 
     def set_token(self, token):
         self.sessionToken = token
         self.save()
-        return
 
     def is_processed(self):
-        print("Getting processed status")
+        print("Getting processed status {0}".format(self.processed))
         return self.processed
 
     def set_processed(self):
@@ -86,26 +83,25 @@ class ActiveURL(models.Model):
 
         self.save()
 
-    def generate_url(self):
+    @classmethod
+    def generate_url(cls):
         new_url = str(uuid.uuid4()).replace('-','')
 
         if ActiveURL.objects.filter(url=new_url).exists() or ExpiredURL.objects.filter(url=new_url).exists():
-            return generate_url()
+            return cls.generate_url()
         else:
-            self.url = new_url
-            self.save()
-            return self.url
+            return new_url
 
     def get_url(self):
-        if self.url != 0:
-            return self.url
-        else:
-            return self.generate_url()
+        return self.url
 
     def increment_count(self):
         self.number_of_files +=1
         self.save()
         return
+
+    def get_mode(self):
+        return self.mode
 
     def get_status(self):
         status = {'processed':self.is_processed(),

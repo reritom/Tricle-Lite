@@ -14,7 +14,10 @@ def get_base_media_path():
 
 def delete_temp():
     media = get_base_media_path()
-    shutil.rmtree(media)
+    try:
+        shutil.rmtree(media)
+    except:
+        pass
 
 def delete_dir(url):
     '''

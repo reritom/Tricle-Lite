@@ -22,24 +22,25 @@ def post(request):
 
     form = ScrambleForm(request.POST, request.FILES)
     if not form.is_valid():
-        return response_ko({"Invalid form data"})
+        return response_ko("Invalid form data")
 
     form = form.cleaned_data
     formdat = {'mode' : form['mode'], 'k1' : form['key_one'], 'k2' : form['key_two'], 'k3' : form['key_three']}
 
     if formdat['mode'] not in ['Scramble', 'Unscramble']:
-        return response_ko({'Invalid mode'})
+        return response_ko('Invalid mode')
 
     for key in ['k1', 'k2', 'k3']:
         if len(formdat[key]) < 3:
-            return response_ko({'Key too short'})
+            return response_ko('Key too short')
 
     if not len(request.FILES.getlist('images')) > 0:
-        return response_ko({"No images submitted"})
+        return response_ko("No images submitted")
 
     # Create an ActiveURL
-    urlobj = ActiveURL.objects.create()
-    this_url = urlobj.get_url()
+    this_url = ActiveURL.generate_url()
+    urlobj = ActiveURL.objects.create(url=this_url)
+
     if formdat['mode'] == 'Unscramble':
         urlobj.mode = 'Unscramble'
     urlobj.set_token(form['retrieve_token'])
@@ -72,7 +73,8 @@ def post(request):
             file_size = os.path.getsize(file_path)
 
             # Create the UrlItem
-            url_item = UrlItem.objects.create(active=urlobj,
+            url_item = UrlItem.objects.create(id=UrlItem.create_url_item_uuid(),
+                                              active=urlobj,
                                               file_name=file_name,
                                               file_type=file_type,
                                               file_size=file_size)

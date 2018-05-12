@@ -7,12 +7,12 @@ from scramble.models.active_url import ActiveURL
 def load(request, url):
     '''
         This method processes the files.
-        This gets AJAX-ed straight after the post
     '''
+    print("In LOAD")
 
-    urlobj = ActiveURL.objects.get(url=url)
+    url_obj = ActiveURL.objects.get(url=url)
 
-    if urlobj.is_processed():
+    if url_obj.is_processed():
         return response_ko("Already loaded")
 
     #process files
@@ -21,5 +21,8 @@ def load(request, url):
     with ScramblerManager(url) as manager:
         manager.run()
     url_obj.set_end()
+
+    url_obj.processed = True
+    url_obj.save()
 
     return response_ok({"url":url})

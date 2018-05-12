@@ -4,6 +4,7 @@ from scramble.models.expired_url import ExpiredURL
 from scramble.models.zip_lock import ZipLock
 from scramble.models.key_chain import KeyChain
 from scramble.models.url_item import UrlItem
+from scramble.models.image_data_store import ImageDataStore
 
 # Register your models here.
 
@@ -12,3 +13,4 @@ admin.site.register(ExpiredURL)
 admin.site.register(ZipLock)
 admin.site.register(KeyChain)
 admin.site.register(UrlItem)
+admin.site.register(ImageDataStore)

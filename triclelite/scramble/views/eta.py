@@ -4,7 +4,7 @@ from scramble.tools.response_tools import response_ko, response_ok
 from scramble.tools import media_tools, url_tools, common_tools
 
 @validate_url_anywhere
-def eta(request):
+def eta(request, url):
     '''
         This view is for returning the estimated or actual processing time for a
         given ActiveUrl.

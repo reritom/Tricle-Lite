@@ -23,26 +23,27 @@ def download(request, url):
     # Validate the request token
     token = request.GET.get('token', False)
     if token is False:
-        return response_ko({"Missing token"})
+        return response_ko("Missing token")
 
     if not urlobj.validate_token(token):
-        return response_ko({"Invalid token"})
+        return response_ko("Invalid token")
 
     # Valiate download-ability
     if not urlobj.is_downloadable():
         #to limit number of download attempts, for security
         url_tools.expire_url(url)
-        return response_ko({'limit reached'})
+        return response_ko('Limit reached')
     else:
         urlobj.inc_down_count()
 
     if not url_tools.url_in_media(url):
         url_tools.expire_url(url)
-        return response_ko({'url not found'})
+        return response_ko('url not found')
+
 
     if not urlobj.is_processed():
-        return response_ko({'url not processed'})
-
+        return response_ko('url not processed')
+    
     # Download if processed
     for files in os.listdir(os.path.join(settings.MEDIA_ROOT, 'scramble', 'temp', url)):
         if files.lower().endswith(('.zip')):

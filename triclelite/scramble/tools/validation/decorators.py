@@ -13,11 +13,13 @@ def validate_url(view):
         print("In inner validator")
         # Validate that the URL exists
         if not url_tools.validate_url_request(url):
+            print("Invalid URL")
             return response_ko("Invalid URL")
 
         # Validate that the URL isn't expired
         if not url_tools.validate_url_not_expired(url):
             url_tools.expire_url(url)
+            print("URL has expired")
             return response_ko("URL has expired")
 
         return view(request, url)

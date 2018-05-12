@@ -3,13 +3,19 @@ from scramble.models.active_url import ActiveURL
 
 from datetime import datetime, timedelta
 from django.utils import timezone
+import uuid
 
 # Create your models here.
 
 class UrlItem(models.Model):
-    active = models.OneToOneField(ActiveURL,
-                                  on_delete=models.CASCADE,
-                                  primary_key=True)
+    '''
+        This exists only for the lifespan of an ActiveURL
+        The relevent data gets put in an ImageDataStore model when this is deleted
+    '''
+    active = models.ForeignKey(ActiveURL,
+                               on_delete=models.CASCADE)
+
+    id = models.CharField(default=str(uuid.uuid4()).replace('-',''), max_length=255, primary_key=True)
 
     file_name = models.CharField(default=0, max_length=255)
     file_type = models.CharField(default=0, max_length=255)
@@ -21,6 +27,15 @@ class UrlItem(models.Model):
 
     def __str__(self):
         return self.active.url + "_" + self.file_name
+
+    @classmethod
+    def create_url_item_uuid(cls):
+        this_uuid = str(uuid.uuid4()).replace('-','')
+
+        if UrlItem.objects.filter(id=this_uuid).exists():
+            return create_url_item_uuid()
+        else:
+            return this_uuid
 
     def set_processed(self):
         self.processed = True
@@ -40,7 +55,7 @@ class UrlItem(models.Model):
         self.save()
 
     def get_process_duration(self):
-        return
+        return self.process_end - self.process_start
 
     def set_file_size(self, file_size):
         self.file_size = file_size

@@ -18,5 +18,5 @@ urlpatterns = [
     url(r'done/(?P<url>\w+)/', done, name='done'),
     url(r'iaw/', cleanup, name='cleanup'),
     url(r'hard/', hard, name='hard'),
-    url(r'eta/', eta, name='eta'),
+    url(r'eta/(?P<url>\w+)/', eta, name='eta'),
 ]
