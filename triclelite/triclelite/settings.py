@@ -41,11 +41,6 @@ else:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
     PHASE="LOCAL"
 
-# Internal settings
-
-EXPIRATION_TIME_LIMIT = 10 # Time for a transaction to become inactive
-DOWNLOAD_LIMIT = 5
-
 # Application definition
 
 INSTALLED_APPS = [

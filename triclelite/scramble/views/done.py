@@ -15,4 +15,4 @@ def done(request, url):
 
         return response_ok({'removed':True})
     else:
-        return response_ok({"Invalid url"})
+        return response_ok("Invalid url")

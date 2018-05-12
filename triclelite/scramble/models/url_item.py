@@ -53,12 +53,12 @@ class UrlItem(models.Model):
         return self.processed
 
     def set_process_start(self):
-        print("Setting start time as {0} for {1}".format(timezone.now, self.file_name))
+        print("Setting start time as {0} for {1}".format(timezone.now(), self.file_name))
         self.process_start = timezone.now()
         self.save()
 
     def set_process_end(self):
-        print("Setting end time as {0} for {1}".format(timezone.now, self.file_name))
+        print("Setting end time as {0} for {1}".format(timezone.now(), self.file_name))
         self.process_end = timezone.now()
         self.save()
 

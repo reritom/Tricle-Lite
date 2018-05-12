@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from scramble import app_settings
 
 from scramble.models.expired_url import ExpiredURL
 
@@ -42,7 +43,7 @@ class ActiveURL(models.Model):
         return self.expired
 
     def get_remaining_downloads(self):
-        return settings.DOWNLOAD_LIMIT - self.down_count
+        return app_settings.DOWNLOAD_LIMIT - self.down_count
 
     def get_token(self):
         return self.sessionToken
@@ -70,10 +71,10 @@ class ActiveURL(models.Model):
             return self.expired
 
     def get_expiration(self):
-        return self.created + timedelta(minutes=settings.EXPIRATION_TIME_LIMIT)
+        return self.created + timedelta(minutes=app_settings.EXPIRATION_TIME_LIMIT)
 
     def is_downloadable(self):
-        return self.down_count <= settings.DOWNLOAD_LIMIT
+        return self.down_count <= app_settings.DOWNLOAD_LIMIT
 
     def inc_down_count(self):
         self.down_count += 1

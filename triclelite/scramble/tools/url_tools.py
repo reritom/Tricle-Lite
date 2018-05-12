@@ -1,6 +1,5 @@
 import uuid, os
 from django.conf import settings
-from scramble import settings as app_settings
 from scramble.models.active_url import ActiveURL
 from scramble.models.expired_url import ExpiredURL
 from scramble.models.url_item import UrlItem
