@@ -88,16 +88,23 @@ class ScramblerManager():
         print("Passed validation")
         self.generate_zip()
 
-        for f in os.listdir(self.media_path):
-            if f.lower().endswith(('bmp', 'jpg', 'png', 'jpeg')):
-                image = Image.open(os.path.join(self.media_path, f))
+        # Retrieve the UrlItems for this ActiveURL
+        for url_item in UrlItem.objects.filter(active=self.urlobj):
+            this_path = url_item.get_file_path()
 
-                if self.mode == 'Scramble':
-                    processedImage = self.scramble_file(image)
-                elif self.mode == 'Unscramble':
-                    processedImage = self.unscramble_file(image)
+        #for f in os.listdir(self.media_path):
+        #    if f.lower().endswith(('bmp', 'jpg', 'png', 'jpeg')):
+            image = Image.open(this_path)
 
-                self.save_file(f, processedImage)
+            url_item.set_process_start()
+            if self.mode == 'Scramble':
+                processedImage = self.scramble_file(image)
+            elif self.mode == 'Unscramble':
+                processedImage = self.unscramble_file(image)
+            url_item.set_process_end()
+            url_item.set_processed()
+
+            self.save_file(url_item.get_file_name(), processedImage)
 
         self.delete_preprocessed()
 
