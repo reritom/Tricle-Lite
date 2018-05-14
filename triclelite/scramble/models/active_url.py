@@ -1,13 +1,12 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
-from scramble import app_settings
 
+from scramble import app_settings
 from scramble.models.expired_url import ExpiredURL
 
 from datetime import datetime, timedelta
 import uuid
-# Create your models here.
 
 class ActiveURL(models.Model):
     url = models.CharField(default=0, max_length=255, unique=True)

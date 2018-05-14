@@ -1,11 +1,11 @@
 from django.db import models
+from django.utils import timezone
+
 from scramble.models.active_url import ActiveURL
 
 from datetime import datetime, timedelta
-from django.utils import timezone
 import uuid
 
-# Create your models here.
 
 class UrlItem(models.Model):
     '''
@@ -26,12 +26,21 @@ class UrlItem(models.Model):
     process_start = models.DateTimeField(default=timezone.now, null=True)
     process_end = models.DateTimeField(default=timezone.now, null=True)
 
+    predicted_time = models.IntegerField(default=0)
+
     def __str__(self):
         return self.active.url + "_" + self.file_name
 
     def set_file_path(self, file_path):
         self.file_path = file_path
         self.save()
+
+    def set_predicted_time(self, time):
+        self.predicted_time = time
+        self.save()
+
+    def get_predicted_time(self):
+        return self.predicted_time
 
     def get_file_path(self):
         return self.file_path

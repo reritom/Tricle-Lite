@@ -1,7 +1,6 @@
 from django.db import models
-from scramble.models.active_url import ActiveURL
 
-# Create your models here.
+from scramble.models.active_url import ActiveURL
 
 class ZipLock(models.Model):
     active = models.OneToOneField(ActiveURL,

@@ -13,4 +13,6 @@ def eta(request, url):
 
     # Compare the files, file sizes and filetypes with that of the expired url durations, and the image data stores to predict the loading time
 
+    # Add the predicted time for each image to its url item (on expiration, this gets added to the data store)
+
     return response_ok({'type':"estimate/actual", 'estimate':"in seconds"})

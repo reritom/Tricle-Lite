@@ -1,8 +1,6 @@
 from django.db import models
 from scramble.models.active_url import ActiveURL
 
-# Create your models here.
-
 class KeyChain(models.Model):
     active = models.OneToOneField(ActiveURL,
                                   on_delete=models.CASCADE,

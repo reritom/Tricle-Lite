@@ -76,6 +76,7 @@ def expire_url(url):
                                                              file_size=url_item.get_file_size(),
                                                              file_name=url_item.get_file_name(),
                                                              process_time=url_item.get_process_duration().seconds,
+                                                             predicted_time=url_item.get_predicted_time(),
                                                              related_url=url_obj.get_url(),
                                                              mode=url_obj.get_mode(),
                                                              id=ImageDataStore.generate_id())

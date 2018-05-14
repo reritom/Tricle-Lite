@@ -1,9 +1,8 @@
 from django.db import models
+from django.utils import timezone
 
 from datetime import datetime, timedelta
 import uuid
-
-# Create your models here.
 
 class ImageDataStore(models.Model):
     id = models.CharField(default=str(uuid.uuid4()).replace('-',''), max_length=255, primary_key=True)
@@ -15,6 +14,12 @@ class ImageDataStore(models.Model):
 
     # In seconds
     process_time = models.IntegerField(default=0)
+
+    # Predicted
+    predicted_time = models.IntegerField(default=0)
+
+    # Used for indexing in estimation predictions
+    created = models.DateTimeField(default=timezone.now, null=True)
 
     def __str__(self):
         return self.related_url + "_" + self.file_name
@@ -46,4 +51,8 @@ class ImageDataStore(models.Model):
 
     def set_process_time(self, time):
         self.process_time = time
+        self.save()
+
+    def set_predicted_time(self, time):
+        self.predicted_time = time
         self.save()
