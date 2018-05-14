@@ -15,4 +15,6 @@ def eta(request, url):
 
     # Add the predicted time for each image to its url item (on expiration, this gets added to the data store)
 
+    # TODO add image dimensions to the url item, and subsequently to the image data stores
+
     return response_ok({'type':"estimate/actual", 'estimate':"in seconds"})
