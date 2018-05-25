@@ -3,7 +3,7 @@ const StartButton = () => import('./tabs/start/start_button.js');
 const EndTab = () => import('./tabs/end/end_tab.js');
 
 export default {
-  name: "App",
+  name: "Base",
   components: {
     FormTab,
     StartButton,
