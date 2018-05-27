@@ -16,19 +16,21 @@ export default {
       url: ""
     }
   },
-  template: `<div class="container">
+  template: `<div  class="tile-container">
+                <div class="container">
 
-                <div id="FormView" v-if="view==='form'">
-                    <form-tab v-on:urlcreated="url = $event" v-on:sessioncreated="sessiontoken = $event" v-on:ready="view='end'"></form-tab>
+                  <div id="FormView" v-if="view==='form'">
+                      <form-tab v-on:urlcreated="url = $event" v-on:sessioncreated="sessiontoken = $event" v-on:ready="view='end'"></form-tab>
+                  </div>
+
+                  <div id="NotStartedView"  v-if="view==='notstarted'">
+                    <start-button v-on:starting="view='form'"></start-button>
+                  </div>
+
+                  <div id="EndView"  v-if="view==='end'">
+                    <end-tab :url="url" :sessiontoken="sessiontoken" v-on:refreshpulse="view='notstarted'"></end-tab>
+                  </div>
                 </div>
-
-                <div id="NotStartedView"  v-if="view==='notstarted'">
-                  <start-button v-on:starting="view='form'"></start-button>
-                </div>
-
-              <div id="EndView"  v-if="view==='end'">
-                <end-tab :url="url" :sessiontoken="sessiontoken" v-on:refreshpulse="view='notstarted'"></end-tab>
-              </div>
 
             </div>`
 };

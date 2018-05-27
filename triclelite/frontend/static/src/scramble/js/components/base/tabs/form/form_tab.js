@@ -7,9 +7,17 @@ export default {
   },
   data: function () {
     return {
+      keys: ["", "", ""],
+      keyvis: ["password", "password", "password"],
       keyone: "",
+      passwordFieldTypeK1: "password",
+      K1tog: "show",
       keytwo: "",
+      passwordFieldTypeK2: "password",
+      K2tog: "show",
       keythree: "",
+      passwordFieldTypeK3: "password",
+      K3tog: "show",
       mode: "Scramble",
       files: "",
       url: "",
@@ -22,12 +30,21 @@ export default {
             <div v-show="loading">
               <p>We are loading</p>
             </div>
+
             <div v-show="!loading">
+            <form>
               <div class="flex-container-column">
-                <div class="box"><input v-model="keyone"></div>
-                <div class="box"><input v-model="keytwo"></div>
-                <div class="box"><input v-model="keythree"></div>
-                <div class="box"><input v-model="zipcode"></div>
+                <div class="box" v-for="key, index in keys">
+                    <input :type="keyvis[index]" v-model="keys[index]" placeholder="key">
+                    <p>{{keyvis[index]}}</p>
+                    <button @click="toggleKeyVisibility($event, index)">{{visVal(index)}}</button>
+                </div>
+
+                <div class="box">
+                  <input v-model="zipcode" placeholder="Zipfile password (optional)">
+                  <span>show</span>
+                </div>
+
                 <div class="box">
                     <!-- Scramble radio boxes -->
                     <input type="radio" id="scramble" value="Scramble" v-model="mode">
@@ -35,14 +52,19 @@ export default {
                     <input type="radio" id="unscramble" value="Unscramble" v-model="mode">
                     <label for="unscramble">Unscramble</label>
                 </div>
-                <div class="box"><button v-show="formIsValid" @click="post()">I am a button</button></div>
+
+                <div class="box">
+                  <button :disabled="!formIsValid" @click="post($event)">I am a button</button>
                 </div>
-                <upload-handler v-on:filesadded="files = $event"></upload-handler>
+              </div>
+            </form>
+              <upload-handler v-on:filesadded="files = $event"></upload-handler>
             </div>
+
             </div>`,
   computed:{
     formIsValid () {
-      if ((this.keyone.length < 3) || (this.keytwo.length < 3) || (this.keythree.length < 3) || (this.files.length === 0)) {
+      if ((this.keys[0].length < 3) || (this.keys[1].length < 3) || (this.keys[2].length < 3) || (this.files.length === 0)) {
         return false
       }
       else {
@@ -51,7 +73,42 @@ export default {
     }
   },
   methods: {
-    post: function() {
+    toggleKeyVisibility(event, index){
+      event.preventDefault();
+      console.log("Toggling the visibility for" + index);
+      console.log("This key is " + this.keyvis[index]);
+
+      if (this.keyvis[index] === 'password'){
+        // we will instead toggle it to visible, but in doing so, any other visible ones need to be hidden
+
+        var newlist = [];
+        for (var i=0; i<this.keyvis.length; i++){
+          newlist.push('password');
+        }
+        newlist[index] = 'text';
+        this.keyvis = newlist;
+      }
+      else {
+        var newlist = [];
+        for (var i=0; i<this.keyvis.length; i++){
+          newlist.push(this.keyvis[i]);
+        }
+
+        newlist[index] = 'password';
+        this.keyvis = newlist;
+      }
+    },
+    visVal(index) {
+      if (this.keyvis[index] === 'password') {
+        return 'show'
+      }
+      else {
+        return 'hide'
+      }
+    },
+    post: function(event) {
+      event.preventDefault();
+
       // Validate and post the form, emit the url
       if (!this.formIsValid){
         // This shouldn't happen, the button is only visible if the form is valid
@@ -62,9 +119,9 @@ export default {
       this.createToken();
 
       formData.append("retrieve_token", this.sessiontoken);
-      formData.append("key_one", this.keyone);
-      formData.append("key_two", this.keytwo);
-      formData.append("key_three", this.keythree);
+      formData.append("key_one", this.keys[0]);
+      formData.append("key_two", this.keys[1]);
+      formData.append("key_three", this.keys[2]);
       formData.append("zipcode", this.zipcode);
       formData.append("mode", this.mode);
       formData.append("images", this.files);
