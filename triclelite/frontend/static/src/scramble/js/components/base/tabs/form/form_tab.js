@@ -8,16 +8,7 @@ export default {
   data: function () {
     return {
       keys: ["", "", ""],
-      keyvis: ["password", "password", "password"],
-      keyone: "",
-      passwordFieldTypeK1: "password",
-      K1tog: "show",
-      keytwo: "",
-      passwordFieldTypeK2: "password",
-      K2tog: "show",
-      keythree: "",
-      passwordFieldTypeK3: "password",
-      K3tog: "show",
+      keyvis: ["password", "password", "password", "password"],
       mode: "Scramble",
       files: "",
       url: "",
@@ -36,13 +27,12 @@ export default {
               <div class="flex-container-column">
                 <div class="box" v-for="key, index in keys">
                     <input :type="keyvis[index]" v-model="keys[index]" placeholder="key">
-                    <p>{{keyvis[index]}}</p>
-                    <button @click="toggleKeyVisibility($event, index)">{{visVal(index)}}</button>
+                    <span @click="toggleKeyVisibility($event, index)" v-html="visVal(index)"></span>
                 </div>
 
                 <div class="box">
-                  <input v-model="zipcode" placeholder="Zipfile password (optional)">
-                  <span>show</span>
+                  <input v-model="zipcode" :type="keyvis[3]" placeholder="Zipfile password (optional)">
+                  <span @click="toggleKeyVisibility($event, 3)" v-html="visVal(3)"></span>
                 </div>
 
                 <div class="box">
@@ -54,7 +44,7 @@ export default {
                 </div>
 
                 <div class="box">
-                  <button :disabled="!formIsValid" @click="post($event)">I am a button</button>
+                  <button :disabled="!formIsValid" @click="post($event)">Go!</button>
                 </div>
               </div>
             </form>
@@ -100,10 +90,10 @@ export default {
     },
     visVal(index) {
       if (this.keyvis[index] === 'password') {
-        return 'show'
+        return '<i class="fa fa-eye"></i>'
       }
       else {
-        return 'hide'
+        return '<i class="fa fa-eye-slash"></i>'
       }
     },
     post: function(event) {

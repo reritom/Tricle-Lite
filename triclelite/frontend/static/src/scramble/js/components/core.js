@@ -17,11 +17,11 @@ export default {
     toggleView: function() {
       if (this.view === 'app') {
         this.view = 'help';
-        this.helpbuttonval = 'Back to app';
+        this.helpbuttonval = 'Back to app <i class="fa fa-angle-left"></i>';
       }
       else {
         this.view = 'app';
-        this.helpbuttonval = 'Help';
+        this.helpbuttonval = 'Help <i class="fa fa-question"></i>';
       }
     }
   },
@@ -36,7 +36,7 @@ export default {
                   <div id="brand">Tricle - a SERES product</div>
 
                   <div id="help">
-                    <button @click="toggleView()">{{helpbuttonval}}</button>
+                    <button @click="toggleView()" v-html="helpbuttonval"></button>
                   </div>
                 </div>
 
