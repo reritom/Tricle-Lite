@@ -25,23 +25,34 @@ export default {
             <div v-show="!loading">
             <form>
               <div class="flex-container-column">
-                <div class="box" v-for="key, index in keys">
-                    <input :type="keyvis[index]" v-model="keys[index]" placeholder="key">
-                    <span @click="toggleKeyVisibility($event, index)" v-html="visVal(index)"></span>
+
+                <div class="input-group" v-for="key, index in keys">
+                    <input class="form-control pwd pwd-input" :type="keyvis[index]" v-model="keys[index]" :placeholder="placeholderVal(index)">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default reveal icon-btn" @click="toggleKeyVisibility($event, index)" v-html="visVal(index)">
+                      </button
+                    </span>
                 </div>
 
-                <div class="box">
-                  <input v-model="zipcode" :type="keyvis[3]" placeholder="Zipfile password (optional)">
-                  <span @click="toggleKeyVisibility($event, 3)" v-html="visVal(3)"></span>
+                <!--div class="input-group">
+                  <input class="form-control pwd pwd-input" v-model="zipcode" :type="keyvis[3]" :placeholder="placeholderVal(3)">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default reveal icon-btn" @click="toggleKeyVisibility($event, 3)" v-html="visVal(3)">
+                    </button>
+                  </span>
+                </div-->
+
+                <div class="box btn-holder">
+                  <div class="row">
+                    <div class="col col-md-6">
+                      <button @click="selectMode($event, 'Scramble')" :class="getClass('S')">Scramble</button>
+                    </div>
+                    <div class="col col-md-6">
+                      <button @click="selectMode($event, 'Unscramble')" :class="getClass('U')">Unscramble</button>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="box">
-                    <!-- Scramble radio boxes -->
-                    <input type="radio" id="scramble" value="Scramble" v-model="mode">
-                    <label for="scramble">Scramble</label>
-                    <input type="radio" id="unscramble" value="Unscramble" v-model="mode">
-                    <label for="unscramble">Unscramble</label>
-                </div>
 
                 <div class="box">
                   <button :disabled="!formIsValid" @click="post($event)">Go!</button>
@@ -88,12 +99,47 @@ export default {
         this.keyvis = newlist;
       }
     },
+    getClass(mode) {
+      if (mode === "U") {
+        return {
+          'btn': true,
+          'btn-holder-btn': true,
+          'btn-primary': (this.mode === "Unscramble") ? true : false
+        }
+      }
+      else if (mode === "S"){
+        return{
+          'btn': true,
+          'btn-holder-btn': true,
+          'btn-primary': (this.mode === "Scramble") ? true : false
+        }
+      }
+    },
+    selectMode(event, mode) {
+      event.preventDefault();
+
+      this.mode = mode;
+    },
     visVal(index) {
       if (this.keyvis[index] === 'password') {
         return '<i class="fa fa-eye"></i>'
       }
       else {
         return '<i class="fa fa-eye-slash"></i>'
+      }
+    },
+    placeholderVal(index) {
+      if (index === 0) {
+        return "First key"
+      }
+      else if (index === 1){
+        return "Second key"
+      }
+      else if (index === 2){
+        return "Third key"
+      }
+      else {
+        return "Zipfile password (optional)"
       }
     },
     post: function(event) {
