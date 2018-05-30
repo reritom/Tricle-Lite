@@ -16,11 +16,25 @@ export default {
                   Add some more files if you want
                 </p>
               </div>
-              <button @click="removeAll()">Remove all selected files</button>
+
+
+
               <div class="flex-container-row-ns">
-              <div class="box-preview" v-for="file, index in ourFileList" @click="removeOne(index)">
-              Deselect {{file.name}}
-              </div>
+                <div class="box-preview" @click="removeAll()" v-show="ourFileList.length > 0">
+                <span class="sub-preview-box">
+                  <span><i class="fa fa-image"></i></span>
+                  <span>Deselectall</span>
+                  <span><i class="fa fa-times-circle"></i></span>
+                </span>
+                </div>
+
+                <div class="box-preview" v-for="file, index in ourFileList" @click="removeOne(index)">
+                <span class="sub-preview-box">
+                  <span><i class="fa fa-image"></i></span>
+                  <span v-html="shortName(file.name)"></span>
+                  <span><i class="fa fa-times-circle"></i></span>
+                </span>
+                </div>
               </div>
             </div>`,
   methods: {
@@ -68,7 +82,17 @@ export default {
     },
     removeOne: function(index) {
       // Remove a single selected file based on its index
+      console.log("Removing a file");
       Vue.delete(this.ourFileList, index);
+    },
+    shortName: function(name) {
+      console.log("Determing short name, length is " + name.length)
+      if (name.length > 17) {
+        var new_name = name.slice(0,7) + '...' + name.slice(name.length - 7, name.length);
+        return new_name
+      }
+
+      return name
     }
   },
   watch: {

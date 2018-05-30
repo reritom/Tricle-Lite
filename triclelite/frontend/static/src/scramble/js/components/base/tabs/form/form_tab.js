@@ -14,7 +14,8 @@ export default {
       url: "",
       zipcode: "",
       sessiontoken: "",
-      loading: false
+      loading: false,
+      status_message: "you are ready"
     }
   },
   template: `<div>
@@ -30,7 +31,7 @@ export default {
                     <input class="form-control pwd pwd-input" :type="keyvis[index]" v-model="keys[index]" :placeholder="placeholderVal(index)">
                     <span class="input-group-btn">
                       <button class="btn btn-default reveal icon-btn" @click="toggleKeyVisibility($event, index)" v-html="visVal(index)">
-                      </button
+                      </button>
                     </span>
                 </div>
 
@@ -53,9 +54,12 @@ export default {
                   </div>
                 </div>
 
+                <div class="box btn-holder">
+                  <p>{{status_message}}</p>
+                </div>
 
-                <div class="box">
-                  <button :disabled="!formIsValid" @click="post($event)">Go!</button>
+                <div class="box btn-holder">
+                  <button :class="getPostClass()" :disabled="!formIsValid" @click="post($event)">Go!</button>
                 </div>
               </div>
             </form>
@@ -71,6 +75,9 @@ export default {
       else {
         return true
       }
+    },
+    formStatus() {
+      return
     }
   },
   methods: {
@@ -113,6 +120,14 @@ export default {
           'btn-holder-btn': true,
           'btn-primary': (this.mode === "Scramble") ? true : false
         }
+      }
+    },
+    getPostClass() {
+      return{
+        'btn': true,
+        'btn-block': true,
+        'btn-default': (!this.formIsValid) ? true : false,
+        'btn-primary': (this.formIsValid) ? true : false
       }
     },
     selectMode(event, mode) {
