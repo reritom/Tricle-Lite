@@ -15,7 +15,8 @@ export default {
       zipcode: "",
       sessiontoken: "",
       loading: false,
-      status_message: "you are ready"
+      keyview: true,
+      fileview: false
     }
   },
   template: `<div>
@@ -24,13 +25,15 @@ export default {
             </div>
 
             <div v-show="!loading">
-            <form>
+
+            <button :class="getKeyviewClass()" @click="keyview = !keyview">Your keys</button>
+            <form v-show="keyview">
               <div class="flex-container-column">
 
                 <div class="input-group" v-for="key, index in keys">
-                    <input class="form-control pwd pwd-input" :type="keyvis[index]" v-model="keys[index]" :placeholder="placeholderVal(index)">
+                    <input class="form-control pwd pwd-input" :type="keyvis[index]" v-model="keys[index]" :placeholder="placeholderVal(index)" v-on:keydown.tab="toggleExpansion(index)">
                     <span class="input-group-btn">
-                      <button class="btn btn-default reveal icon-btn" @click="toggleKeyVisibility($event, index)" v-html="visVal(index)">
+                      <button class="btn btn-default reveal icon-btn" @click="toggleKeyVisibility($event, index)" v-html="visVal(index)" :tabindex="-1">
                       </button>
                     </span>
                 </div>
@@ -54,30 +57,40 @@ export default {
                   </div>
                 </div>
 
-                <div class="box btn-holder">
-                  <p>{{status_message}}</p>
-                </div>
-
-                <div class="box btn-holder">
-                  <button :class="getPostClass()" :disabled="!formIsValid" @click="post($event)">Go!</button>
-                </div>
               </div>
             </form>
-              <upload-handler v-on:filesadded="files = $event"></upload-handler>
+            <div class="box btn-holder">
+              <button :class="getPostClass()" :disabled="!fullFormIsValid" @click="post($event)">Go!</button>
+            </div>
+              <button :class="getFileviewClass()" @click="fileview = !fileview"> Your Files </button>
+              <upload-handler v-show="fileview" v-on:filesadded="files = $event"></upload-handler>
             </div>
 
             </div>`,
   computed:{
-    formIsValid () {
-      if ((this.keys[0].length < 3) || (this.keys[1].length < 3) || (this.keys[2].length < 3) || (this.files.length === 0)) {
+    fullFormIsValid () {
+      if ((this.keys[0].length < 3) || (this.keys[1].length < 3) || (this.keys[2].length < 3) || (this.files.length < 1)) {
         return false
       }
       else {
         return true
       }
     },
-    formStatus() {
-      return
+    formIsValid () {
+      if ((this.keys[0].length < 3) || (this.keys[1].length < 3) || (this.keys[2].length < 3)) {
+        return false
+      }
+      else {
+        return true
+      }
+    },
+    fileFormIsValid () {
+      if (this.files.length < 1) {
+        return false
+      }
+      else {
+        return true
+      }
     }
   },
   methods: {
@@ -106,6 +119,15 @@ export default {
         this.keyvis = newlist;
       }
     },
+    toggleExpansion(index) {
+      if (index !== 2) {
+        return
+      }
+      else {
+        this.keyview = false;
+        this.fileview = true;
+      }
+    },
     getClass(mode) {
       if (mode === "U") {
         return {
@@ -126,8 +148,22 @@ export default {
       return{
         'btn': true,
         'btn-block': true,
-        'btn-default': (!this.formIsValid) ? true : false,
-        'btn-primary': (this.formIsValid) ? true : false
+        'btn-default': (!this.fullFormIsValid) ? true : false,
+        'btn-success': (this.fullFormIsValid) ? true : false
+      }
+    },
+    getKeyviewClass() {
+      return {
+        'btn btn-block': true,
+        'btn-default': !this.formIsValid,
+        'btn-success': this.formIsValid
+      }
+    },
+    getFileviewClass() {
+      return {
+        'btn btn-block': true,
+        'btn-default': !this.fileFormIsValid,
+        'btn-success': this.fileFormIsValid
       }
     },
     selectMode(event, mode) {
@@ -161,7 +197,7 @@ export default {
       event.preventDefault();
 
       // Validate and post the form, emit the url
-      if (!this.formIsValid){
+      if (!this.fullFormIsValid){
         // This shouldn't happen, the button is only visible if the form is valid
         return
       }
