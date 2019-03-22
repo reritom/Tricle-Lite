@@ -28,7 +28,8 @@ DEPLOYSTAT = False
 if DEPLOYSTAT == True:
     ALLOWED_HOSTS = ['tricle.xyz',
                     'www.tricle.xyz',
-                    'reritom.pythonanywhere.com']
+                    'reritom.pythonanywhere.com',
+		    'tricle.com']
     DEBUG = False
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
     SECURE_SSL_REDIRECT = True
@@ -36,7 +37,7 @@ if DEPLOYSTAT == True:
     SESSION_COOKIE_SECURE = True
     PHASE="PROD"
 else:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ['tricle.com']
     DEBUG = True
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
     PHASE="LOCAL"
