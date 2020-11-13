@@ -37,7 +37,7 @@ if DEPLOYSTAT == True:
     SESSION_COOKIE_SECURE = True
     PHASE="PROD"
 else:
-    ALLOWED_HOSTS = ['tricle.com']
+    ALLOWED_HOSTS = ['*']
     DEBUG = True
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
     PHASE="LOCAL"
